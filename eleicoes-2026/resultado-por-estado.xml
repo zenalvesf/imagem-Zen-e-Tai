@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eleicao ano="2026" turno="1" data="2026-10-04" segundoTurno="2026-10-25" fonte="TSE">
+  <!-- Resultado das Eleições Gerais 2026 (1º turno, 04/10/2026) por estado.
+       Fonte oficial: TSE (resultados.tse.jus.br). Campos com status="aguardando"
+       ainda não têm dados apurados; preencha com atualizar_resultados.py. -->
+  <brasil>
+    <cargo nome="Presidente" status="parcial" urnasApuradasPct="12.45"
+           fonte="https://www.br104.com.br/eleicoes-2026/cidades/flavio-bolsonaro-lula-parcial-apuracao-eleicoes-2026">
+      <candidato nome="Flávio Bolsonaro" partido="PL" votos="7369884" pct="51.09"/>
+      <candidato nome="Lula" partido="PT" votos="5872874" pct="40.71"/>
+    </cargo>
+  </brasil>
+  <estados>
+    <estado uf="AC" nome="Acre" regiao="Norte">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="AL" nome="Alagoas" regiao="Nordeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="AP" nome="Amapá" regiao="Norte">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="AM" nome="Amazonas" regiao="Norte">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="BA" nome="Bahia" regiao="Nordeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="CE" nome="Ceará" regiao="Nordeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="DF" nome="Distrito Federal" regiao="Centro-Oeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="ES" nome="Espírito Santo" regiao="Sudeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct="">
+        <pesquisaVespera data="2026-10-03" fonte="Poder360" situacao="Flávio Bolsonaro à frente"/>
+      </cargo>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="GO" nome="Goiás" regiao="Centro-Oeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="MA" nome="Maranhão" regiao="Nordeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="MT" nome="Mato Grosso" regiao="Centro-Oeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="MS" nome="Mato Grosso do Sul" regiao="Centro-Oeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="MG" nome="Minas Gerais" regiao="Sudeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct="">
+        <pesquisaVespera data="2026-10-03" fonte="Poder360" situacao="empate técnico"/>
+      </cargo>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="PA" nome="Pará" regiao="Norte">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="PB" nome="Paraíba" regiao="Nordeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="PR" nome="Paraná" regiao="Sul">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="PE" nome="Pernambuco" regiao="Nordeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="PI" nome="Piauí" regiao="Nordeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="RJ" nome="Rio de Janeiro" regiao="Sudeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct="">
+        <pesquisaVespera data="2026-10-03" fonte="Poder360" situacao="empate técnico"/>
+      </cargo>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="RN" nome="Rio Grande do Norte" regiao="Nordeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="RS" nome="Rio Grande do Sul" regiao="Sul">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="RO" nome="Rondônia" regiao="Norte">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="RR" nome="Roraima" regiao="Norte">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="SC" nome="Santa Catarina" regiao="Sul">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="SP" nome="São Paulo" regiao="Sudeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct="">
+        <pesquisaVespera data="2026-10-03" fonte="Poder360" situacao="Flávio Bolsonaro à frente"/>
+      </cargo>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="SE" nome="Sergipe" regiao="Nordeste">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+    <estado uf="TO" nome="Tocantins" regiao="Norte">
+      <cargo nome="Presidente" status="aguardando" urnasApuradasPct=""/>
+      <cargo nome="Governador" status="aguardando" urnasApuradasPct=""/>
+    </estado>
+  </estados>
+</eleicao>
