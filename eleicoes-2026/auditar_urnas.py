@@ -207,15 +207,15 @@ def ler_log(dados, secao=None):
     pend_conf, pend_susp = Counter(), Counter()
     secao_da_urna, alheios = {}, Counter()
 
+    # voto confirmado até o último cargo e urna caída antes da linha "computado": às vezes a
+    # urna chegou a gravar o voto, às vezes não. Fica separado; o BU decide (processar_secao)
+    quase = {"n": 0, "confirmados": Counter(), "suspensos": Counter()}
+
     def descartar():
-        nonlocal computados
         if pend_conf.get("Presidente"):
-            # o eleitor confirmou até o último cargo e a urna caiu antes de gravar a linha
-            # "computado" no log: o voto foi gravado (se não foi, a conta com o BU não fecha)
-            eventos["Urna caiu logo após o eleitor confirmar o último cargo (linha 'computado' ausente no log)"] += 1
-            computados += 1
-            confirmados.update(pend_conf)
-            suspensos.update(pend_susp)
+            quase["n"] += 1
+            quase["confirmados"].update(pend_conf)
+            quase["suspensos"].update(pend_susp)
         elif pend_conf or pend_susp:
             eventos["Voto interrompido (urna desligada/reiniciada) e refeito pelo eleitor"] += 1
         pend_conf.clear()
@@ -263,7 +263,7 @@ def ler_log(dados, secao=None):
     if len(textos) > 1:
         eventos[f"Urna substituída durante a votação ({len(textos)} logs de urna)"] += 1
     return {"computados": computados, "confirmados": dict(confirmados), "suspensos": dict(suspensos),
-            "urnas": len(textos), "por_hora": dict(por_hora),
+            "urnas": len(textos), "por_hora": dict(por_hora), "quase": quase,
             "primeiro_voto": inicio,
             "ultimo_voto": fim, "eventos": dict(eventos)}
 
@@ -310,6 +310,24 @@ def processar_secao(uf, mun, zona, secao):
         aptos = aptos or ent["aptos"]
         cargos.update(ent["cargos"])
     comp = cargos.get("Presidente", next(iter(cargos.values()), {})).get("comparecimento")
+    q = log["quase"]
+    if q["n"]:
+        # testa as duas hipóteses: votos da urna travada gravados ou não
+        def fecha(incluir):
+            k = 1 if incluir else 0
+            if comp != log["computados"] + k * q["n"]:
+                return False
+            return all(sum(v["qtd"] for v in d["votos"]) ==
+                       log["confirmados"].get(c, 0) + log["suspensos"].get(c, 0)
+                       + k * (q["confirmados"].get(c, 0) + q["suspensos"].get(c, 0))
+                       for c, d in cargos.items())
+        gravado = fecha(True)
+        if gravado or not fecha(False):
+            log["computados"] += q["n"]
+            log["confirmados"] = dict(Counter(log["confirmados"]) + q["confirmados"])
+            log["suspensos"] = dict(Counter(log["suspensos"]) + q["suspensos"])
+        rot = "voto gravado no BU" if gravado else "voto não gravado" if fecha(False) else "indeterminado"
+        log["eventos"][f"Urna travou logo após o eleitor confirmar o último cargo ({rot})"] = q["n"]
     lin.update({"aptos_bu": aptos, "comparecimento_bu": comp, "votos_computados_log": log["computados"],
                 "log_bate_bu": "OK" if comp == log["computados"] else "DIFERENTE",
                 "primeiro_voto": log["primeiro_voto"], "ultimo_voto": log["ultimo_voto"],
