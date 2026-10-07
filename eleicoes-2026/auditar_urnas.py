@@ -6,8 +6,8 @@ da urna e confere:
   1. eleitores que votaram segundo o log ("O voto do eleitor foi computado")
      = comparecimento registrado no BU, para cada cargo;
   2. votos do log para cada cargo ("Voto confirmado para [X]" mais
-     "Atribuído voto nulo por suspensão [X]", quando o eleitor não conclui)
-     x votos do BU para o mesmo cargo;
+     "Atribuído voto nulo por suspensão [X]", quando o eleitor não conclui),
+     contando só os eleitores cujo voto foi computado, x votos do BU;
   3. soma dos BUs do município, por candidato, = total publicado pelo TSE.
 
 O BU é um arquivo ASN.1 (DER). Este script lê a estrutura sem depender do
@@ -15,7 +15,12 @@ esquema oficial: localiza os blocos ResultadoVotacao (tipo de cargo,
 comparecimento, totais por cargo) e TotalVotosVotavel (tipo de voto,
 quantidade, partido/número) pela forma de cada SEQUENCE.
 
+Os arquivos de urna não são guardados: cada seção é baixada, conferida e descartada.
+O resultado de cada seção vai para <dir>/<uf>/<município>.jsonl, então uma
+execução interrompida continua de onde parou.
+
 Uso:
+  python3 auditar_urnas.py --uf ba --dir ./urnas --saida ./auditoria            # estado inteiro
   python3 auditar_urnas.py --uf ac --municipio 01066 --dir ./urnas --saida ./auditoria
 """
 import argparse
@@ -24,6 +29,8 @@ import io
 import json
 import os
 import re
+import sys
+import threading
 import urllib.request
 import zipfile
 from collections import Counter, defaultdict
@@ -58,34 +65,27 @@ def baixar(url, destino):
     return False
 
 
-def secoes_do_municipio(pasta, uf, mun):
+def baixar_mem(url):
+    for _ in range(5):
+        try:
+            with urllib.request.urlopen(url, timeout=90) as r:
+                return r.read()
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return None
+        except Exception:
+            pass
+    raise RuntimeError(f"falha ao baixar {url}")
+
+
+def municipios_do_estado(pasta, uf):
     cfg = os.path.join(pasta, f"{uf}-p{PLEITO:06d}-cs.json")
     baixar(f"{BASE}/arquivo-urna/{PLEITO}/config/{uf}/{uf}-p{PLEITO:06d}-cs.json", cfg)
     with open(cfg, encoding="utf-8") as f:
         d = json.load(f)
-    for m in d["abr"][0]["mu"]:
-        if m["cd"] == mun:
-            # seções com "nsp" são agregadas: os eleitores votam na urna da seção principal
-            return m["nm"], [(z["cd"], s["ns"], s.get("nsp")) for z in m["zon"] for s in z["sec"]]
-    raise SystemExit(f"Município {mun} não encontrado em {uf.upper()}")
-
-
-def baixar_secao(pasta, uf, mun, zona, secao):
-    base = f"{BASE}/arquivo-urna/{PLEITO}/dados/{uf}/{mun}/{zona}/{secao}"
-    dsec = os.path.join(pasta, uf, mun, f"{zona}-{secao}")
-    aux = os.path.join(dsec, "aux.json")
-    if not baixar(f"{base}/p{PLEITO:06d}-{uf}-m{mun}-z{zona}-s{secao}-aux.json", aux):
-        return dsec, "sem aux"
-    with open(aux, encoding="utf-8") as f:
-        info = json.load(f)
-    hashes = [h for h in info.get("hashes", []) if h.get("st") in ("Totalizado", "Recebido")] or info.get("hashes", [])
-    if not hashes:
-        return dsec, info.get("st", "sem arquivos")
-    h = hashes[-1]
-    for a in h["arq"]:
-        if a["tp"] in ("bu", "log"):
-            baixar(f"{base}/{h['hash']}/{a['nm']}", os.path.join(dsec, a["tp"]))
-    return dsec, info.get("st", "")
+    # seções com "nsp" são agregadas: os eleitores votam na urna da seção principal
+    return [(m["cd"], m["nm"], [(z["cd"], s["ns"], s.get("nsp")) for z in m["zon"] for s in z["sec"]])
+            for m in d["abr"][0]["mu"]]
 
 
 # ---------------------------------------------------------------- DER
@@ -125,10 +125,9 @@ UNIV, CTX = 0, 2
 INTEGER, OCTET, ENUM, SEQ = 2, 4, 10, 16
 
 
-def ler_bu(caminho):
-    """Devolve {'eleicoes': {id: {'aptos':n, 'cargos': {cargo: {'comparecimento':n, 'votos': [..]}}}}}."""
-    with open(caminho, "rb") as f:
-        env = der(f.read())[0][3]
+def ler_bu(dados):
+    """Devolve {id_eleicao: {'aptos': n, 'cargos': {cargo: {'comparecimento': n, 'votos': [..]}}}}."""
+    env = der(dados)[0][3]
     conteudo = next(e for e in env if eh(e, UNIV, OCTET, False))[3]
     bu = der(conteudo)[0][3]
     res = {}
@@ -193,36 +192,54 @@ def textos_log(dados):
                 yield z.read(nome).decode("latin-1")
 
 
-def ler_log(caminho):
-    with open(caminho, "rb") as f:
-        textos = list(textos_log(f.read()))
+def ler_log(dados):
+    textos = list(textos_log(dados))
+    # um log por urna; em ordem cronológica, mantendo a ordem original das linhas de cada um
+    textos.sort(key=lambda t: next((l[:19] for l in t.splitlines() if l.startswith("04/10/2026")), "~"))
     computados, confirmados, suspensos, eventos = 0, Counter(), Counter(), Counter()
     por_hora = Counter()
     inicio = fim = None
-    linhas = sorted(l for t in textos for l in t.splitlines()
-                    if l[:10].count("/") == 2 and l[6:10] == "2026")
-    for linha in linhas:
-        p = linha.split("\t")
-        if len(p) < 5:
-            continue
-        data, nivel, _id, app, msg = p[:5]
-        if app != "VOTA":
-            continue
-        if msg == "O voto do eleitor foi computado":
-            computados += 1
-            por_hora[data[11:13]] += 1
-            inicio = inicio or data
-            fim = data
-        m = RE_CARGO.match(msg)
-        if m:
-            confirmados[m.group(1)] += 1
-        m = RE_SUSP.match(msg)
-        if m:
-            suspensos[m.group(1)] += 1
-        if nivel in ("ERRO", "ALERTA"):
-            eventos[f"{nivel}: {re.sub(r'[0-9]+', 'N', msg)}"] += 1
-        elif msg == "Eleitor foi suspenso pelo mesário":
-            eventos["Eleitor suspenso pelo mesário (não concluiu o voto)"] += 1
+    # votos de um eleitor só valem quando a urna registra "O voto do eleitor foi computado";
+    # se a urna é desligada ou reiniciada no meio, o voto parcial é descartado e o eleitor
+    # vota de novo desde o início
+    pend_conf, pend_susp = Counter(), Counter()
+
+    def descartar():
+        if pend_conf or pend_susp:
+            eventos["Voto interrompido (urna desligada/reiniciada) e refeito pelo eleitor"] += 1
+            pend_conf.clear()
+            pend_susp.clear()
+
+    for t in textos:
+        for linha in t.splitlines():
+            p = linha.split("\t")
+            if len(p) < 5 or not linha.startswith("04/10/2026"):
+                continue
+            data, nivel, _id, app, msg = p[:5]
+            if app != "VOTA":
+                continue
+            if msg == "Eleitor foi habilitado" or msg in ("Votação suspensa", "Iniciando aplicação - 1º turno"):
+                descartar()
+            elif msg == "O voto do eleitor foi computado":
+                computados += 1
+                por_hora[data[11:13]] += 1
+                inicio = inicio or data
+                fim = data
+                confirmados.update(pend_conf)
+                suspensos.update(pend_susp)
+                pend_conf.clear()
+                pend_susp.clear()
+            m = RE_CARGO.match(msg)
+            if m:
+                pend_conf[m.group(1)] += 1
+            m = RE_SUSP.match(msg)
+            if m:
+                pend_susp[m.group(1)] += 1
+            if nivel in ("ERRO", "ALERTA"):
+                eventos[f"{nivel}: {re.sub(r'[0-9]+', 'N', msg)}"] += 1
+            elif msg == "Eleitor foi suspenso pelo mesário":
+                eventos["Eleitor suspenso pelo mesário (não concluiu o voto)"] += 1
+    descartar()
     if len(textos) > 1:
         eventos[f"Urna substituída durante a votação ({len(textos)} logs de urna)"] += 1
     return {"computados": computados, "confirmados": dict(confirmados), "suspensos": dict(suspensos),
@@ -249,57 +266,60 @@ def totais_tse(pasta, uf, mun, eleicao, cargo):
             "comparecimento": int(d["e"]["c"])}
 
 
-# ---------------------------------------------------------------- main
-def main():
-    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--uf", required=True)
-    p.add_argument("--municipio", required=True, help="código TSE do município (5 dígitos)")
-    p.add_argument("--dir", required=True, help="pasta de cache dos arquivos baixados")
-    p.add_argument("--saida", required=True)
-    p.add_argument("--threads", type=int, default=12)
-    a = p.parse_args()
-    uf, mun = a.uf.lower(), a.municipio
-    os.makedirs(a.saida, exist_ok=True)
+# ---------------------------------------------------------------- seção
+def processar_secao(uf, mun, zona, secao):
+    base = f"{BASE}/arquivo-urna/{PLEITO}/dados/{uf}/{mun}/{zona}/{secao}"
+    lin = {"zona": zona, "secao": secao}
+    aux = baixar_mem(f"{base}/p{PLEITO:06d}-{uf}-m{mun}-z{zona}-s{secao}-aux.json")
+    if aux is None:
+        return {**lin, "situacao": "sem arquivos no TSE"}
+    info = json.loads(aux)
+    hashes = [h for h in info.get("hashes", []) if h.get("st") in ("Totalizado", "Recebido")] \
+        or info.get("hashes", [])
+    lin["situacao"] = info.get("st", "")
+    if not hashes:
+        return lin
+    h = hashes[-1]
+    arq = {a["tp"]: a["nm"] for a in h["arq"]}
+    if "bu" not in arq or "log" not in arq:
+        return {**lin, "situacao": f"{lin['situacao']} (sem BU/log)"}
+    bu = ler_bu(baixar_mem(f"{base}/{h['hash']}/{arq['bu']}"))
+    log = ler_log(baixar_mem(f"{base}/{h['hash']}/{arq['log']}"))
+    cargos, aptos = {}, None
+    for ent in bu.values():
+        aptos = aptos or ent["aptos"]
+        cargos.update(ent["cargos"])
+    comp = cargos.get("Presidente", next(iter(cargos.values()), {})).get("comparecimento")
+    lin.update({"aptos_bu": aptos, "comparecimento_bu": comp, "votos_computados_log": log["computados"],
+                "log_bate_bu": "OK" if comp == log["computados"] else "DIFERENTE",
+                "primeiro_voto": log["primeiro_voto"], "ultimo_voto": log["ultimo_voto"],
+                "urnas_no_log": log["urnas"], "votos_por_hora": json.dumps(log["por_hora"], sort_keys=True),
+                "eventos_log": "; ".join(f"{k} ({v})" for k, v in log["eventos"].items())})
+    soma = {}
+    for cargo, dados in cargos.items():
+        total = sum(v["qtd"] for v in dados["votos"])
+        no_log = log["confirmados"].get(cargo, 0) + log["suspensos"].get(cargo, 0)
+        lin[f"votos_bu_{cargo}"] = total
+        lin[f"votos_log_{cargo}"] = no_log
+        lin[f"bate_{cargo}"] = "OK" if no_log == total else "DIFERENTE"
+        if total != no_log:
+            lin["log_bate_bu"] = "DIFERENTE"
+        c = Counter()
+        for v in dados["votos"]:
+            c[str(v["numero"]) if v["tipo"] == "Nominal" else v["tipo"]] += v["qtd"]
+        soma[cargo] = dict(c)
+    lin["soma"] = soma
+    return lin
 
-    nome_mun, secoes = secoes_do_municipio(a.dir, uf, mun)
-    print(f"{nome_mun} ({uf.upper()}): {len(secoes)} seções")
-    agregadas = [(z, s, p) for z, s, p in secoes if p]
-    proprias = [(z, s) for z, s, p in secoes if not p]
-    with ThreadPoolExecutor(a.threads) as ex:
-        baixados = list(ex.map(lambda zs: (zs, *baixar_secao(a.dir, uf, mun, *zs)), proprias))
 
-    linhas, soma = [], defaultdict(Counter)
-    for zona, secao, principal in agregadas:
-        linhas.append({"zona": zona, "secao": secao, "situacao": f"agregada à seção {principal}",
-                       "log_bate_bu": "agregada"})
-    for (zona, secao), dsec, st in baixados:
-        bu_arq, log_arq = os.path.join(dsec, "bu"), os.path.join(dsec, "log")
-        if not (os.path.exists(bu_arq) and os.path.exists(log_arq)):
-            linhas.append({"zona": zona, "secao": secao, "situacao": f"sem BU/log ({st})"})
-            continue
-        bu, log = ler_bu(bu_arq), ler_log(log_arq)
-        cargos = {}
-        aptos = None
-        for ide, ent in bu.items():
-            aptos = aptos or ent["aptos"]
-            cargos.update(ent["cargos"])
-        comp = cargos.get("Presidente", next(iter(cargos.values()), {})).get("comparecimento")
-        lin = {"zona": zona, "secao": secao, "situacao": st, "aptos_bu": aptos,
-               "comparecimento_bu": comp, "votos_computados_log": log["computados"],
-               "log_bate_bu": "OK" if comp == log["computados"] else "DIFERENTE",
-               "primeiro_voto": log["primeiro_voto"], "ultimo_voto": log["ultimo_voto"],
-               "urnas_no_log": log["urnas"], "votos_por_hora": json.dumps(log["por_hora"], sort_keys=True),
-               "eventos_log": "; ".join(f"{k} ({v})" for k, v in log["eventos"].items())}
-        for cargo, dados in cargos.items():
-            total = sum(v["qtd"] for v in dados["votos"])
-            no_log = log["confirmados"].get(cargo, 0) + log["suspensos"].get(cargo, 0)
-            lin[f"votos_bu_{cargo}"] = total
-            lin[f"votos_log_{cargo}"] = no_log
-            lin[f"bate_{cargo}"] = "OK" if no_log == total else "DIFERENTE"
-            for v in dados["votos"]:
-                chave = v["numero"] if v["tipo"] in ("Nominal",) else v["tipo"]
-                soma[cargo][chave] += v["qtd"]
-        linhas.append(lin)
+def resumir_municipio(a, uf, mun, nome_mun, linhas):
+    soma = defaultdict(Counter)
+    for l in linhas:
+        for cargo, c in (l.get("soma") or {}).items():
+            for k, q in c.items():
+                soma[cargo][int(k) if k.isdigit() else k] += q
+    linhas = [{k: v for k, v in l.items() if k != "soma"} for l in linhas]
+    linhas.sort(key=lambda l: (l["zona"], l["secao"]))
 
     campos = sorted({k for l in linhas for k in l}, key=lambda k: (
         ["zona", "secao", "situacao", "aptos_bu", "comparecimento_bu", "votos_computados_log",
@@ -337,15 +357,80 @@ def main():
                            delimiter=";")
         w.writeheader()
         w.writerows(comparacao)
-
-    ok = sum(1 for l in linhas if l.get("log_bate_bu") == "OK")
-    print(f"Seções com urna própria: {len(proprias)} (+{len(agregadas)} agregadas). "
-          f"Log = BU: {ok} de {len(proprias)}")
-    print(f"Candidatos/brancos/nulos com soma dos BUs = TSE: "
-          f"{sum(1 for c in comparacao if c['bate'] == 'OK')} de {len(comparacao)}")
     with open(os.path.join(a.saida, f"resumo_{uf}{mun}.json"), "w", encoding="utf-8") as f:
         json.dump({"uf": uf.upper(), "municipio": nome_mun, "codigo": mun, "secoes": linhas,
                    "comparacao": comparacao}, f, ensure_ascii=False)
+    proprias = [l for l in linhas if l.get("log_bate_bu") != "agregada"]
+    return (sum(l.get("log_bate_bu") == "OK" for l in proprias), len(proprias),
+            sum(c["bate"] == "OK" for c in comparacao), len(comparacao))
+
+
+# ---------------------------------------------------------------- main
+def main():
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--uf", required=True)
+    p.add_argument("--municipio", default="todos", help="código TSE do município (5 dígitos) ou 'todos'")
+    p.add_argument("--dir", required=True, help="pasta do resultado por seção e dos totais do TSE")
+    p.add_argument("--saida", required=True)
+    p.add_argument("--threads", type=int, default=24)
+    a = p.parse_args()
+    uf = a.uf.lower()
+    os.makedirs(a.saida, exist_ok=True)
+    os.makedirs(os.path.join(a.dir, uf), exist_ok=True)
+
+    muns = [m for m in municipios_do_estado(a.dir, uf) if a.municipio in ("todos", m[0])]
+    if not muns:
+        raise SystemExit(f"Município {a.municipio} não encontrado em {uf.upper()}")
+    feitos, pend = {}, []
+    for mun, _nome, secoes in muns:
+        arq = os.path.join(a.dir, uf, f"{mun}.jsonl")
+        feitos[mun] = {}
+        if os.path.exists(arq):
+            with open(arq, encoding="utf-8") as f:
+                for linha in f:
+                    try:
+                        l = json.loads(linha)
+                    except ValueError:
+                        continue
+                    feitos[mun][(l["zona"], l["secao"])] = l
+        for zona, secao, principal in secoes:
+            if principal:
+                feitos[mun][(zona, secao)] = {"zona": zona, "secao": secao, "log_bate_bu": "agregada",
+                                              "situacao": f"agregada à seção {principal}"}
+            elif (zona, secao) not in feitos[mun]:
+                pend.append((mun, zona, secao))
+    total = sum(len(s) for _m, _n, s in muns)
+    print(f"{uf.upper()}: {len(muns)} municípios, {total} seções, {len(pend)} a processar", flush=True)
+
+    trava = threading.Lock()
+    feitas = [0]
+
+    def tarefa(t):
+        mun, zona, secao = t
+        try:
+            lin = processar_secao(uf, mun, zona, secao)
+        except Exception as e:  # erro de rede persistente: fica para a próxima execução
+            print(f"  erro {mun}/{zona}/{secao}: {e}", file=sys.stderr, flush=True)
+            return
+        with trava:
+            with open(os.path.join(a.dir, uf, f"{mun}.jsonl"), "a", encoding="utf-8") as f:
+                f.write(json.dumps(lin, ensure_ascii=False) + "\n")
+            feitos[mun][(zona, secao)] = lin
+            feitas[0] += 1
+            if feitas[0] % 1000 == 0:
+                print(f"  {feitas[0]} de {len(pend)} seções", flush=True)
+
+    with ThreadPoolExecutor(a.threads) as ex:
+        list(ex.map(tarefa, pend))
+
+    tot = [0, 0, 0, 0]
+    faltando = 0
+    for mun, nome, secoes in muns:
+        faltando += len(secoes) - len(feitos[mun])
+        r = resumir_municipio(a, uf, mun, nome, list(feitos[mun].values()))
+        tot = [x + y for x, y in zip(tot, r)]
+    print(f"{uf.upper()}: log = BU em {tot[0]} de {tot[1]} urnas; soma dos BUs = TSE em {tot[2]} de {tot[3]} "
+          f"totais; seções ainda sem resultado: {faltando}", flush=True)
 
 
 if __name__ == "__main__":
