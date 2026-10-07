@@ -208,10 +208,18 @@ def ler_log(dados, secao=None):
     secao_da_urna, alheios = {}, Counter()
 
     def descartar():
-        if pend_conf or pend_susp:
+        nonlocal computados
+        if pend_conf.get("Presidente"):
+            # o eleitor confirmou até o último cargo e a urna caiu antes de gravar a linha
+            # "computado" no log: o voto foi gravado (se não foi, a conta com o BU não fecha)
+            eventos["Urna caiu logo após o eleitor confirmar o último cargo (linha 'computado' ausente no log)"] += 1
+            computados += 1
+            confirmados.update(pend_conf)
+            suspensos.update(pend_susp)
+        elif pend_conf or pend_susp:
             eventos["Voto interrompido (urna desligada/reiniciada) e refeito pelo eleitor"] += 1
-            pend_conf.clear()
-            pend_susp.clear()
+        pend_conf.clear()
+        pend_susp.clear()
 
     for t in textos:
         for linha in t.splitlines():
