@@ -1,0 +1,258 @@
+<title>Painel Eleições 2026</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: barra de presets + indicadores no topo; tabela dinâmica de arrastar ocupa o resto, com rolagem própria */
+:root{
+  --bg:#f3f1ea; --panel:#fffdf7; --fg:#1d1c19; --muted:#6b675c; --line:#dcd7c9; --chip:#ece8dc;
+  --accent:#2a78d6; --accent-rgb:42,120,214; --confirma:#1f8a4c;
+  --display:"Archivo",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#17171a; --panel:#202024; --fg:#ecebe6; --muted:#a19d92; --line:#34343a; --chip:#2b2b30;
+  --accent:#3987e5; --accent-rgb:57,135,229; --confirma:#4cc27f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17171a; --panel:#202024; --fg:#ecebe6; --muted:#a19d92; --line:#34343a; --chip:#2b2b30;
+  --accent:#3987e5; --accent-rgb:57,135,229; --confirma:#4cc27f; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--display);font-size:14px;line-height:1.45}
+.wrap{max-width:1500px;margin:0 auto;padding-inline:16px;padding-block:18px 40px;display:grid;gap:16px}
+header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:26px;font-weight:800;margin:2px 0 0;text-wrap:balance}
+.meta{font-size:13px;color:var(--muted)}
+.meta a{color:inherit}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0}
+.kpi small{display:block;color:var(--muted);font-size:12px}
+.kpi b{font-family:var(--mono);font-size:18px;font-variant-numeric:tabular-nums}
+.kpi span{display:block;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bar label{font-size:12px;color:var(--muted);font-family:var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg button{border:0;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+button{font:inherit;font-size:13px;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+button[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.hint{font-size:13px;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:6px;padding:8px 12px}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px;overflow:auto;min-height:420px;position:relative}
+.loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-family:var(--mono);background:var(--panel)}
+.loading[hidden]{display:none}
+
+/* PivotTable.js, adaptado aos tokens */
+.pvtUi{color:var(--fg);border-collapse:separate;border-spacing:6px}
+.pvtUi td{vertical-align:top}
+.pvtUi select{font:inherit;font-size:13px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:3px 4px;max-width:220px}
+.pvtAxisContainer,.pvtVals{border:1px dashed var(--line);background:var(--bg);padding:6px;min-width:20px;min-height:34px;border-radius:6px;user-select:none;-webkit-user-select:none}
+.pvtAxisContainer li{padding:4px 3px;list-style-type:none;cursor:move}
+.pvtAxisContainer li.pvtPlaceholder{border:1px dashed var(--accent);border-radius:5px;padding:3px 15px}
+.pvtAxisContainer li span.pvtAttr{background:var(--chip);border:1px solid var(--line);padding:3px 8px;white-space:nowrap;border-radius:999px;font-size:13px}
+.pvtUnused{max-width:180px}
+.pvtRows .pvtAttr,.pvtCols .pvtAttr{background:rgba(var(--accent-rgb),.16)!important;border-color:rgba(var(--accent-rgb),.5)!important}
+.pvtTriangle{cursor:pointer;color:var(--muted)}
+.pvtHorizList li{display:inline-block}
+.pvtVertList{vertical-align:top}
+.pvtFilteredAttribute{font-style:italic;text-decoration:underline dotted}
+.pvtFilterBox{z-index:100;width:300px;border:1px solid var(--line);background:var(--panel);color:var(--fg);position:absolute;text-align:center;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.18);padding-bottom:8px}
+.pvtFilterBox h4{margin:12px;font-size:14px}
+.pvtFilterBox p{margin:8px auto}
+.pvtFilterBox input[type='text']{width:230px;font:inherit;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 6px}
+.pvtFilterBox .count{color:var(--muted);margin-left:3px}
+.pvtCheckContainer{text-align:left;font-size:13px;white-space:nowrap;overflow-y:auto;max-height:260px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.pvtCheckContainer p{margin:4px 8px}
+.pvtRendererArea{padding:4px}
+table.pvtTable{font-size:12px;border-collapse:collapse;font-variant-numeric:tabular-nums}
+table.pvtTable thead tr th,table.pvtTable tbody tr th{background:var(--chip);color:var(--fg);border:1px solid var(--line);padding:5px 7px;font-weight:600;text-align:left}
+table.pvtTable .pvtColLabel{text-align:center}
+table.pvtTable .pvtTotalLabel{text-align:right}
+table.pvtTable tbody tr td{color:var(--fg);padding:5px 7px;background:var(--panel);border:1px solid var(--line);text-align:right;font-family:var(--mono)}
+.pvtTotal,.pvtGrandTotal{font-weight:700}
+.pvtVals{text-align:center;white-space:nowrap}
+.pvtRowOrder,.pvtColOrder{cursor:pointer;width:15px;margin-left:5px;display:inline-block;color:var(--muted)}
+.pvtAggregator{margin-bottom:5px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Eleições Gerais 2026 · 1º turno · 04/10/2026</div>
+      <h1>Painel de resultados</h1>
+      <div class="meta">Dados oficiais do TSE (totalização de 05/10/2026). Arraste os campos para linhas e colunas, como numa tabela dinâmica do Excel.</div>
+    </div>
+  </header>
+
+  <section class="kpis" id="kpis" aria-label="Resumo nacional"></section>
+
+  <div class="bar" role="group" aria-label="Base de dados">
+    <label>Base</label>
+    <span class="seg">
+      <button id="b-mun" aria-pressed="true">Municípios · Presidente, Governador, Senador</button>
+      <button id="b-uf" aria-pressed="false">Estados · todos os cargos</button>
+    </span>
+  </div>
+  <div class="bar" role="group" aria-label="Visões prontas">
+    <label>Visões prontas</label>
+    <span id="presets" style="display:flex;flex-wrap:wrap;gap:6px"></span>
+  </div>
+  <div class="hint">Campos que dá para arrastar: Região, UF, Município, Cargo, Tipo (Candidato, Branco, Nulo, Abstenção, Legenda), Candidato, Partido, Número, Situação. Toque na setinha ▾ de um campo para filtrar. Troque "Tabela" por um gráfico no seletor da esquerda. No Senado cada eleitor tem 2 votos.</div>
+
+  <div class="stage"><div id="pivot"></div><div class="loading" id="loading">Carregando…</div></div>
+
+  <div class="meta">Fonte: <a href="https://resultados.tse.jus.br">resultados.tse.jus.br</a>, eleições 6257 (Presidente) e 6259 (Governador, Senador, Deputados). Deputados aparecem por estado. Abstenção = aptos que não compareceram.</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-ui@1.13.2/dist/jquery-ui.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-ui-touch-punch@0.2.3/jquery.ui.touch-punch.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/pivot.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/pivot.pt.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/plotly.js-dist-min@2.35.2/plotly.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pivottable@2.23.0/dist/plotly_renderers.min.js"></script>
+<script>
+const DADOS = /*__DADOS__*/;
+
+const REG_ORDEM = ["Norte","Nordeste","Centro-Oeste","Sudeste","Sul","Exterior"];
+const TIPO_ORDEM = ["Candidato","Legenda","Branco","Nulo","Abstenção"];
+const CARGO_ORDEM = ["Presidente","Governador","Senador","Deputado Federal","Deputado Estadual","Deputado Distrital"];
+const CORES = ["#2a78d6","#eb6834","#1baf7a","#eda100","#e87ba4","#008300","#4a3aa7","#e34948"];
+const nf = new Intl.NumberFormat("pt-BR");
+const pf = new Intl.NumberFormat("pt-BR",{style:"percent",minimumFractionDigits:2,maximumFractionDigits:2});
+
+function montar(base){
+  const d = DADOS[base], out = new Array(d.v.length/3);
+  for(let i=0,j=0;i<d.v.length;i+=3,j++){
+    const L = d.l[d.v[i]], C = d.c[d.v[i+1]];
+    const r = {"Região":L[0],"UF":L[1]};
+    if(base==="mun") r["Município"]=L[2];
+    r["Cargo"]=C[0]; r["Tipo"]=C[1]; r["Número"]=C[2]; r["Candidato"]=C[3];
+    r["Partido"]=C[4]; r["Situação"]=C[5]; r["Votos"]=d.v[i+2];
+    out[j]=r;
+  }
+  return out;
+}
+const cache = {};
+function registros(base){ return cache[base] || (cache[base] = montar(base)); }
+
+function kpis(){
+  const d = DADOS.uf; let fl=0, lu=0, ab=0, br=0, nu=0, ap=0;
+  for(let i=0;i<d.v.length;i+=3){
+    const C=d.c[d.v[i+1]]; if(C[0]!=="Presidente") continue;
+    const v=d.v[i+2];
+    if(C[3]==="FLAVIO BOLSONARO") fl+=v; else if(C[3]==="LULA") lu+=v;
+    else if(C[1]==="Abstenção") ab+=v; else if(C[1]==="Branco") br+=v; else if(C[1]==="Nulo") nu+=v;
+  }
+  ap = DADOS.aptosPres;
+  const comp = ap-ab, val = comp-br-nu;
+  const itens = [
+    ["Flávio Bolsonaro (PL)", nf.format(fl), pf.format(fl/val)+" dos válidos"],
+    ["Lula (PT)", nf.format(lu), pf.format(lu/val)+" dos válidos"],
+    ["Abstenção", nf.format(ab), pf.format(ab/ap)+" dos aptos"],
+    ["Brancos", nf.format(br), pf.format(br/comp)+" do comparecimento"],
+    ["Nulos", nf.format(nu), pf.format(nu/comp)+" do comparecimento"],
+  ];
+  document.getElementById("kpis").innerHTML = itens.map(k=>`<div class="kpi"><small>${k[0]} · Presidente</small><b>${k[1]}</b><span>${k[2]}</span></div>`).join("");
+}
+
+function ordem(lista){ const s=$.pivotUtilities.sortAs(lista); return s; }
+function sorters(){ return {"Região":ordem(REG_ORDEM),"Tipo":ordem(TIPO_ORDEM),"Cargo":ordem(CARGO_ORDEM)}; }
+
+function corVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function renderers(){
+  const pt = $.pivotUtilities.locales.pt.renderers;
+  const p = $.pivotUtilities.plotly_renderers;
+  const r = Object.assign({}, pt);
+  if (p && window.Plotly){
+    r["Gráfico de barras"]=p["Bar Chart"];
+    r["Barras horizontais"]=p["Horizontal Bar Chart"];
+    r["Barras empilhadas"]=p["Stacked Bar Chart"];
+    r["Barras horizontais empilhadas"]=p["Horizontal Stacked Bar Chart"];
+    r["Gráfico de pizza"]=p["Multiple Pie Chart"];
+    r["Gráfico de linhas"]=p["Line Chart"];
+  }
+  return r;
+}
+function rendererOptions(){
+  const sw = document.querySelector(".stage").clientWidth;
+  const w = sw > 1000 ? sw - 620 : 360;
+  const rgb = corVar("--accent-rgb");
+  return {
+    heatmap:{colorScaleGenerator:function(values){
+      const min=Math.min(...values), max=Math.max(...values);
+      return x => `rgba(${rgb},${max===min?0.2:(0.06+0.5*(x-min)/(max-min)).toFixed(3)})`;
+    }},
+    plotly:{width:w, height:Math.max(360, Math.round(w*0.5)), colorway:CORES,
+      paper_bgcolor:"rgba(0,0,0,0)", plot_bgcolor:"rgba(0,0,0,0)",
+      font:{family:"Archivo, system-ui, sans-serif", color:corVar("--fg")},
+      separators:",."},
+    plotlyConfig:{displaylogo:false, responsive:true}
+  };
+}
+
+let baseAtual = "mun";
+const PRESETS = {
+  mun: [
+    ["Presidente por região e estado", {rows:["Região","UF"], cols:["Candidato"], inclusions:{"Cargo":["Presidente"],"Tipo":["Candidato"]}, rendererName:"Mapa de Calor por Linhas", aggregatorName:"Soma como Fração da Linha"}],
+    ["Abstenção, brancos e nulos", {rows:["Região","UF"], cols:["Cargo","Tipo"], inclusions:{"Tipo":["Branco","Nulo","Abstenção"],"Cargo":["Presidente","Governador"]}, rendererName:"Tabela", aggregatorName:"Soma de Inteiros"}],
+    ["Presidente x Governador", {rows:["UF"], cols:["Cargo"], inclusions:{"Cargo":["Presidente","Governador"],"Tipo":["Candidato","Branco","Nulo"]}, rendererName:"Tabela", aggregatorName:"Soma de Inteiros"}],
+    ["Cidades de um estado", {rows:["Município"], cols:["Candidato"], inclusions:{"Cargo":["Presidente"],"UF":["SP"],"Tipo":["Candidato"]}, rendererName:"Mapa de Calor por Linhas", aggregatorName:"Soma como Fração da Linha"}],
+    ["Gráfico: votos por região", {rows:["Região"], cols:["Candidato"], inclusions:{"Cargo":["Presidente"],"Candidato":["FLAVIO BOLSONARO","LULA"]}, rendererName:"Gráfico de barras", aggregatorName:"Soma de Inteiros"}],
+  ],
+  uf: [
+    ["Governadores e senadores eleitos", {rows:["UF","Cargo","Candidato","Partido"], cols:[], inclusions:{"Cargo":["Governador","Senador"],"Situação":["Eleito"]}, rendererName:"Tabela", aggregatorName:"Soma de Inteiros"}],
+    ["Deputados federais eleitos por partido", {rows:["Partido"], cols:["Região"], inclusions:{"Cargo":["Deputado Federal"],"Situação":"ELEITOS"}, rendererName:"Mapa de Calor", aggregatorName:"Contagem"}],
+    ["Votos de legenda por partido", {rows:["Partido"], cols:["Cargo"], inclusions:{"Tipo":["Legenda"]}, rendererName:"Tabela com Barras", aggregatorName:"Soma de Inteiros"}],
+    ["Brancos e nulos por cargo", {rows:["Cargo"], cols:["Tipo"], inclusions:{"Tipo":["Branco","Nulo","Abstenção"]}, rendererName:"Tabela", aggregatorName:"Soma de Inteiros"}],
+  ]
+};
+
+function eleitos(){
+  const s=new Set(); for(const c of DADOS.uf.c){ if(/^Eleito/.test(c[5])) s.add(c[5]); } return [...s];
+}
+
+function desenhar(cfg){
+  const loading=document.getElementById("loading"); loading.hidden=false;
+  setTimeout(()=>{
+    const inc = {...(cfg.inclusions||{})};
+    if(inc["Situação"]==="ELEITOS") inc["Situação"]=eleitos();
+    $("#pivot").pivotUI(registros(baseAtual), {
+      rows:cfg.rows||[], cols:cfg.cols||[], vals:["Votos"],
+      aggregatorName:cfg.aggregatorName||"Soma de Inteiros",
+      rendererName:cfg.rendererName||"Tabela",
+      inclusions:inc, exclusions:{},
+      renderers:renderers(), sorters:sorters(), rendererOptions:rendererOptions(),
+      hiddenFromAggregators:["Região","UF","Município","Cargo","Tipo","Candidato","Partido","Número","Situação"],
+      hiddenFromDragDrop:["Votos"],
+      menuLimit:6000, unusedAttrsVertical:true,
+      onRefresh:()=>{loading.hidden=true;}
+    }, true, "pt");
+    loading.hidden=true;
+  }, 30);
+}
+
+function presets(){
+  const box=document.getElementById("presets"); box.innerHTML="";
+  PRESETS[baseAtual].forEach(([nome,cfg],i)=>{
+    const b=document.createElement("button"); b.textContent=nome; b.id=`p-${baseAtual}-${i}`;
+    b.onclick=()=>desenhar(cfg); box.appendChild(b);
+  });
+}
+function trocar(base){
+  baseAtual=base;
+  document.getElementById("b-mun").setAttribute("aria-pressed", base==="mun");
+  document.getElementById("b-uf").setAttribute("aria-pressed", base==="uf");
+  presets(); desenhar(PRESETS[base][0][1]);
+}
+
+function iniciar(){
+  if(!window.jQuery || !$.pivotUtilities || !$.pivotUtilities.locales.pt){
+    document.getElementById("loading").textContent="Não foi possível carregar a biblioteca da tabela dinâmica. Recarregue a página.";
+    return;
+  }
+  kpis();
+  document.getElementById("b-mun").onclick=()=>trocar("mun");
+  document.getElementById("b-uf").onclick=()=>trocar("uf");
+  trocar("mun");
+}
+iniciar();
+</script>
