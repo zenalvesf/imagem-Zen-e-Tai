@@ -183,7 +183,8 @@ RE_SUSP = re.compile(r"Atribu[ií]do voto nulo por suspens[aã]o \[(.+?)\]")
 
 def textos_log(dados):
     """Devolve o texto de cada logd.dat do arquivo .jez. Quando a urna é trocada durante a
-    votação, o log da urna substituída vem dentro, como outro .jez."""
+    votação, o log da urna substituída vem dentro, como outro .jez. O pacote pode trazer
+    também cópias do mesmo log (memória interna "MI" e externa "ME")."""
     with zipfile.ZipFile(io.BytesIO(dados)) as z:
         for nome in z.namelist():
             if nome.endswith(".jez"):
@@ -206,6 +207,7 @@ def ler_log(dados, secao=None):
     # vota de novo desde o início
     pend_conf, pend_susp = Counter(), Counter()
     secao_da_urna, alheios = {}, Counter()
+    vistas, ids_urna = set(), set()
 
     # voto confirmado até o último cargo e urna caída antes da linha "computado": às vezes a
     # urna chegou a gravar o voto, às vezes não. Fica separado; o BU decide (processar_secao)
@@ -226,7 +228,13 @@ def ler_log(dados, secao=None):
             p = linha.split("\t")
             if len(p) < 5 or not linha.startswith("04/10/2026"):
                 continue
+            # cada linha termina com um código próprio; cópias MI/ME do mesmo log se repetem
+            if linha in vistas:
+                continue
+            vistas.add(linha)
             data, nivel, id_urna, app, msg = p[:5]
+            if app == "VOTA":
+                ids_urna.add(id_urna)
             if msg.startswith("Seção Eleitoral: "):
                 secao_da_urna[id_urna] = msg.split(": ", 1)[1].strip()
             if app != "VOTA":
@@ -260,10 +268,10 @@ def ler_log(dados, secao=None):
     descartar()
     for outra, n in alheios.items():
         eventos[f"Log publicado traz trecho da urna da seção {outra} ({n} votos dela, ignorados)"] += 1
-    if len(textos) > 1:
-        eventos[f"Urna substituída durante a votação ({len(textos)} logs de urna)"] += 1
+    if len(ids_urna) > 1:
+        eventos[f"Urna substituída durante a votação ({len(ids_urna)} urnas no log)"] += 1
     return {"computados": computados, "confirmados": dict(confirmados), "suspensos": dict(suspensos),
-            "urnas": len(textos), "por_hora": dict(por_hora), "quase": quase,
+            "urnas": max(len(ids_urna), 1), "por_hora": dict(por_hora), "quase": quase,
             "primeiro_voto": inicio,
             "ultimo_voto": fim, "eventos": dict(eventos)}
 
@@ -301,6 +309,8 @@ def processar_secao(uf, mun, zona, secao):
         return lin
     h = hashes[-1]
     arq = {a["tp"]: a["nm"] for a in h["arq"]}
+    if "bu" not in arq and "busa" in arq:
+        return apurada_pelo_sa(lin, base, h, arq)
     if "bu" not in arq or "log" not in arq:
         return {**lin, "situacao": f"{lin['situacao']} (sem BU/log)"}
     bu = ler_bu(baixar_mem(f"{base}/{h['hash']}/{arq['bu']}"))
@@ -347,6 +357,43 @@ def processar_secao(uf, mun, zona, secao):
             c[str(v["numero"]) if v["tipo"] == "Nominal" else v["tipo"]] += v["qtd"]
         soma[cargo] = dict(c)
     lin["soma"] = soma
+    return lin
+
+
+RE_MOTIVO = re.compile(r"Motivo da apura[cç][aã]o: (.+)")
+RE_TIPO_SA = re.compile(r"Tipo de apura[cç][aã]o selecionada \((.+)\)")
+
+
+def apurada_pelo_sa(lin, base, h, arq):
+    """Seção apurada pelo Sistema de Apuração (votação em cédula, urna encerrada antes da hora,
+    recuperação de votos): não há log de votação para conferir; o BU do SA (busa) entra na soma."""
+    bu = ler_bu(baixar_mem(f"{base}/{h['hash']}/{arq['busa']}"))
+    motivo = tipo = ""
+    if "logsa" in arq:
+        for texto in textos_log(baixar_mem(f"{base}/{h['hash']}/{arq['logsa']}")):
+            for linha in texto.splitlines():
+                p = linha.split("\t")
+                if len(p) < 5:
+                    continue
+                m = RE_MOTIVO.match(p[4])
+                motivo = m.group(1).strip() if m else motivo
+                m = RE_TIPO_SA.match(p[4])
+                tipo = m.group(1).strip() if m else tipo
+    cargos, aptos = {}, None
+    for ent in bu.values():
+        aptos = aptos or ent["aptos"]
+        cargos.update(ent["cargos"])
+    comp = cargos.get("Presidente", next(iter(cargos.values()), {})).get("comparecimento")
+    soma = {}
+    for cargo, dados in cargos.items():
+        c = Counter()
+        for v in dados["votos"]:
+            c[str(v["numero"]) if v["tipo"] == "Nominal" else v["tipo"]] += v["qtd"]
+        soma[cargo] = dict(c)
+    lin.update({"situacao": "Apurada pelo Sistema de Apuração (SA)", "log_bate_bu": "SA",
+                "aptos_bu": aptos, "comparecimento_bu": comp,
+                "eventos_log": f"Apurada pelo SA: {motivo or 'motivo não informado'} ({tipo or 'tipo não informado'}) (1)",
+                "soma": soma})
     return lin
 
 
@@ -398,7 +445,7 @@ def resumir_municipio(a, uf, mun, nome_mun, linhas):
     with open(os.path.join(a.saida, f"resumo_{uf}{mun}.json"), "w", encoding="utf-8") as f:
         json.dump({"uf": uf.upper(), "municipio": nome_mun, "codigo": mun, "secoes": linhas,
                    "comparacao": comparacao}, f, ensure_ascii=False)
-    proprias = [l for l in linhas if l.get("log_bate_bu") != "agregada"]
+    proprias = [l for l in linhas if l.get("log_bate_bu") not in ("agregada", "SA")]
     return (sum(l.get("log_bate_bu") == "OK" for l in proprias), len(proprias),
             sum(c["bate"] == "OK" for c in comparacao), len(comparacao))
 
