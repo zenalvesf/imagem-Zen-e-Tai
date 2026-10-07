@@ -44,7 +44,7 @@ def nf(n):
     return f"{n:,}".replace(",", ".")
 
 
-def ler_estado(pasta, uf, casos):
+def ler_estado(pasta, uf, casos, casos_sa):
     muns, eventos, hora = [], Counter(), Counter()
     tot = Counter()
     for f in sorted(glob.glob(os.path.join(pasta, f"resumo_{uf.lower()}[0-9]*.json"))):
@@ -53,6 +53,12 @@ def ler_estado(pasta, uf, casos):
         for s in d["secoes"]:
             if s.get("log_bate_bu") == "agregada":
                 m["agregadas"] += 1
+                continue
+            if s.get("log_bate_bu") == "SA":
+                m["sa"] += 1
+                m["comparecimento"] += int(s.get("comparecimento_bu") or 0)
+                m["aptos"] += int(s.get("aptos_bu") or 0)
+                casos_sa.append((uf, d["municipio"].title(), s))
                 continue
             if "comparecimento_bu" not in s:
                 m["sem_arquivo"] += 1
@@ -110,9 +116,9 @@ def main():
                     oficial[r["uf"]] = int(r["comparecimento"])
 
     estados, tot, eventos, hora = [], Counter(), Counter(), defaultdict(Counter)
-    casos = []
+    casos, casos_sa = [], []
     for uf in ufs:
-        muns, t, ev, h = ler_estado(a.saida_auditoria, uf, casos)
+        muns, t, ev, h = ler_estado(a.saida_auditoria, uf, casos, casos_sa)
         if not muns:
             continue
         t["municipios"] = len(muns)
@@ -179,10 +185,17 @@ def main():
       <tbody>{linhas_casos}</tbody>
     </table></div>
   </section>"""
+    li_sa = "" if not casos_sa else (
+        f"<li><b>{len(casos_sa)} seções apuradas pelo Sistema de Apuração (SA).</b> Quando a urna não pode ser usada "
+        "até o fim, os votos são apurados pelo SA, por exemplo com cédulas de papel. Não há log de votação para comparar, "
+        "e o BU do SA entra na soma, que bate com o TSE. Casos: "
+        + "; ".join(f"{html.escape(mun)} ({uf}), zona {c['zona']}, seção {c['secao']}: "
+                    f"{html.escape(c.get('eventos_log', '').replace('Apurada pelo SA: ', '').rsplit(' (1)', 1)[0])}"
+                    for uf, mun, c in casos_sa) + ".</li>")
     linhas_ev = "".join(
         f"<tr><td>{html.escape(k.replace('ALERTA: ', '').replace('ERRO: ', 'Erro: ')[:110])}</td>"
         f"<td>{nf(v)}</td><td class='muted'>{html.escape(EXPLICA.get(k, ''))}</td></tr>"
-        for k, v in eventos.most_common(14) if not k.startswith(("Urna substituída", "Log publicado traz")))
+        for k, v in eventos.most_common(16) if not k.startswith(("Urna substituída", "Log publicado traz", "Apurada pelo SA")))
 
     titulo = "Auditoria de Urnas" if len(estados) > 1 else f"Auditoria de Urnas {estados[0][0]}"
     pagina = f"""<title>{titulo}</title>
@@ -231,7 +244,7 @@ code{{font-family:var(--mono);font-size:13px}}
   <header>
     <div class="eyebrow">Eleições 2026 · 1º turno · Arquivos de urna do TSE</div>
     <h1>Auditoria de urnas</h1>
-    <p class="muted">Conferência, seção por seção, entre o log de cada urna, o boletim de urna (BU) e o resultado oficial do TSE. Estados auditados: {nomes_ufs}. São {nf(tot['urnas'] + tot['agregadas'] + tot['sem_arquivo'])} seções em {nf(tot['municipios'])} municípios.</p>
+    <p class="muted">Conferência, seção por seção, entre o log de cada urna, o boletim de urna (BU) e o resultado oficial do TSE. Estados auditados: {nomes_ufs}. São {nf(tot['urnas'] + tot['agregadas'] + tot['sem_arquivo'] + tot['sa'])} seções em {nf(tot['municipios'])} municípios.</p>
   </header>
 
   <div class="veredito {'' if tudo_ok else 'x'}">{'<b>Tudo bateu.</b> Nenhuma diferença sem explicação entre log, BU e resultado oficial.' if tudo_ok else '<b>Há diferenças a examinar.</b> Veja as células em laranja e os municípios marcados abaixo.'}</div>
@@ -258,6 +271,7 @@ code{{font-family:var(--mono);font-size:13px}}
   <section>
     <h2>O que parecia diferença, mas é previsto</h2>
     <ul class="exp">
+      {li_sa}
       <li><b>{nf(tot['agregadas'])} seções agregadas.</b> Seções pequenas cujos eleitores votam na urna de outra seção. Não têm arquivo próprio, e os votos estão no BU da seção principal.</li>
       <li><b>{nf(tot['trocas'])} urnas substituídas durante a votação.</b> O log da urna com defeito vem dentro do arquivo de log, e somando os logs o total bate com o BU.</li>
       <li><b>{nf(tot['interrompidos'])} votos interrompidos.</b> A urna foi desligada ou reiniciada no meio do voto de um eleitor. O voto parcial foi descartado, o eleitor votou de novo desde o início, e só o voto completo entra no BU.</li>
