@@ -1,92 +1,86 @@
 #!/usr/bin/env python3
-"""Preenche resultado-por-estado.xml com os dados simplificados do TSE.
-
-Os arquivos do TSE seguem o padrão (formato usado em 2022):
-  {base}/{eleicao}/dados-simplificados/{uf}/{uf}-c{cargo:04d}-e{eleicao:06d}-r.json
-com os campos "pst" (% de seções totalizadas) e "cand" (lista de candidatos
-com "nm", "cc", "vap", "pvap", "e" e "st").
+"""Regenera resultado-por-estado.xml com os resultados oficiais do TSE
+(Presidente e Governador por estado), a partir dos CSVs de consolidar_tse.py.
 
 Uso:
-  # baixando direto do TSE (os códigos de eleição de 2026 saem no ele-c.json)
-  python3 atualizar_resultados.py --eleicao-presidente <cod> --eleicao-governador <cod>
-
-  # ou a partir de JSONs já baixados numa pasta (mesmos nomes de arquivo)
-  python3 atualizar_resultados.py --dir ./json --eleicao-presidente <cod> --eleicao-governador <cod>
+  python3 baixar_tse.py --dir ./tse-json
+  python3 consolidar_tse.py --dir ./tse-json --saida ./dados
+  python3 atualizar_resultados.py --dados ./dados
 """
 import argparse
-import json
+import csv
 import os
-import urllib.request
 import xml.etree.ElementTree as ET
+from collections import defaultdict
 
-BASE = "https://resultados.tse.jus.br/oficial/ele2026"
-CARGOS = {"Presidente": 1, "Governador": 3}
 XML = os.path.join(os.path.dirname(os.path.abspath(__file__)), "resultado-por-estado.xml")
+CARGOS = ("Presidente", "Governador")
+ORDEM_UF = ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB",
+            "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"]
 
 
-def num(valor):
-    return str(valor).replace(".", "").replace(",", ".") if valor not in (None, "") else ""
+def ler(dados, nome):
+    with open(os.path.join(dados, f"{nome}.csv"), encoding="utf-8") as f:
+        return list(csv.DictReader(f, delimiter=";"))
 
 
-def carregar(uf, cargo, eleicao, pasta):
-    nome = f"{uf}-c{cargo:04d}-e{eleicao:06d}-r.json"
-    if pasta:
-        caminho = os.path.join(pasta, nome)
-        if not os.path.exists(caminho):
-            return None
-        with open(caminho, encoding="utf-8") as f:
-            return json.load(f)
-    url = f"{BASE}/{eleicao}/dados-simplificados/{uf}/{nome}"
-    try:
-        with urllib.request.urlopen(url, timeout=30) as r:
-            return json.load(r)
-    except Exception as erro:
-        print(f"  {uf} c{cargo}: falha ao baixar ({erro})")
-        return None
-
-
-def preencher(no_cargo, dados):
-    for filho in list(no_cargo):
-        if filho.tag == "candidato":
-            no_cargo.remove(filho)
-    pst = num(dados.get("pst"))
-    no_cargo.set("urnasApuradasPct", pst)
-    no_cargo.set("status", "final" if pst in ("100", "100.00") else "parcial")
-    candidatos = sorted(dados.get("cand", []), key=lambda c: int(num(c.get("vap")) or 0), reverse=True)
-    for c in candidatos:
-        ET.SubElement(no_cargo, "candidato", {
-            "nome": c.get("nm", ""),
-            "partido": c.get("cc", ""),
-            "votos": num(c.get("vap")),
-            "pct": num(c.get("pvap")),
-            "situacao": c.get("st", ""),
-        })
+def cargo_xml(pai, cargo, resumo, cands):
+    validos = int(resumo["validos"])
+    no = ET.SubElement(pai, "cargo", {
+        "nome": cargo, "status": "final", "urnasApuradasPct": "100",
+        "aptos": resumo["aptos"], "comparecimento": resumo["comparecimento"],
+        "abstencao": resumo["abstencao"], "brancos": resumo["brancos"], "nulos": resumo["nulos"],
+        "validos": resumo["validos"]})
+    for c in sorted(cands, key=lambda c: -c["votos"]):
+        ET.SubElement(no, "candidato", {
+            "nome": c["candidato"], "partido": c["partido"], "votos": str(c["votos"]),
+            "pct": f"{100 * c['votos'] / validos:.2f}" if validos else "", "situacao": c["situacao"]})
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--eleicao-presidente", type=int, required=True)
-    p.add_argument("--eleicao-governador", type=int, required=True)
-    p.add_argument("--dir", help="pasta com os JSONs do TSE já baixados")
-    args = p.parse_args()
-    eleicoes = {"Presidente": args.eleicao_presidente, "Governador": args.eleicao_governador}
+    p.add_argument("--dados", required=True, help="pasta com os CSVs de consolidar_tse.py")
+    a = p.parse_args()
 
-    arvore = ET.parse(XML, ET.XMLParser(target=ET.TreeBuilder(insert_comments=True)))
-    for estado in arvore.getroot().iter("estado"):
-        uf = estado.get("uf").lower()
-        for no_cargo in estado.findall("cargo"):
-            nome = no_cargo.get("nome")
-            dados = carregar(uf, CARGOS[nome], eleicoes[nome], args.dir)
-            if dados:
-                preencher(no_cargo, dados)
-                print(f"  {uf.upper()} {nome}: {no_cargo.get('urnasApuradasPct')}% apurado")
+    resumo = {(r["uf"], r["cargo"]): r for r in ler(a.dados, "resumo_estado")}
+    cands = defaultdict(list)
+    nomes, regioes = {}, {}
+    for r in ler(a.dados, "votos_estado"):
+        nomes[r["uf"]], regioes[r["uf"]] = r["municipio"], r["regiao"]
+        if r["cargo"] in CARGOS and r["tipo"] == "Candidato":
+            cands[(r["uf"], r["cargo"])].append({**r, "votos": int(r["votos"])})
 
-    dados_br = carregar("br", CARGOS["Presidente"], eleicoes["Presidente"], args.dir)
-    if dados_br:
-        no_br = arvore.getroot().find("brasil/cargo")
-        preencher(no_br, dados_br)
-        no_br.set("fonte", "TSE")
+    raiz = ET.Element("eleicao", {"ano": "2026", "turno": "1", "data": "2026-10-04",
+                                  "segundoTurno": "2026-10-25", "fonte": "TSE"})
+    raiz.append(ET.Comment(
+        " Resultado oficial do 1º turno das Eleições Gerais 2026 por estado. Fonte: TSE, "
+        "resultados.tse.jus.br (eleições 6257 e 6259, totalização de 05/10/2026). "
+        "Percentuais sobre votos válidos. Gerado por atualizar_resultados.py. "))
 
+    # Brasil = soma dos estados + exterior (ZZ)
+    br_res = defaultdict(int)
+    br_cand = defaultdict(lambda: {"votos": 0})
+    for uf in ORDEM_UF + ["ZZ"]:
+        r = resumo.get((uf, "Presidente"))
+        if not r:
+            continue
+        for k in ("aptos", "comparecimento", "abstencao", "brancos", "nulos", "validos"):
+            br_res[k] += int(r[k])
+        for c in cands[(uf, "Presidente")]:
+            b = br_cand[c["candidato"]]
+            b.update({"candidato": c["candidato"], "partido": c["partido"], "situacao": c["situacao"]})
+            b["votos"] += c["votos"]
+    brasil = ET.SubElement(raiz, "brasil")
+    cargo_xml(brasil, "Presidente", {k: str(v) for k, v in br_res.items()}, list(br_cand.values()))
+
+    estados = ET.SubElement(raiz, "estados")
+    for uf in ORDEM_UF:
+        e = ET.SubElement(estados, "estado", {"uf": uf, "nome": nomes[uf], "regiao": regioes[uf]})
+        for cargo in CARGOS:
+            if (uf, cargo) in resumo:
+                cargo_xml(e, cargo, resumo[(uf, cargo)], cands[(uf, cargo)])
+
+    arvore = ET.ElementTree(raiz)
     ET.indent(arvore, space="  ")
     arvore.write(XML, encoding="UTF-8", xml_declaration=True)
     print(f"Atualizado: {XML}")

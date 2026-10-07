@@ -1,267 +1,691 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <eleicao ano="2026" turno="1" data="2026-10-04" segundoTurno="2026-10-25" fonte="TSE">
-  <!-- Resultado final do 1º turno das Eleições Gerais 2026 (04/10/2026) por estado.
-       Fonte: apuração do TSE, compilada de veículos de imprensa (Metrópoles, Gazeta do Povo,
-       Senado, Exame, Agência Brasil). Percentuais sobre votos válidos; pequenas divergências
-       de centésimos entre fontes são possíveis. Use atualizar_resultados.py com os JSONs do TSE
-       para os números oficiais completos. -->
+  <!-- Resultado oficial do 1º turno das Eleições Gerais 2026 por estado. Fonte: TSE, resultados.tse.jus.br (eleições 6257 e 6259, totalização de 05/10/2026). Percentuais sobre votos válidos. Gerado por atualizar_resultados.py. -->
   <brasil>
-    <cargo nome="Presidente" status="final" urnasApuradasPct="100" resultado="2º turno em 25/10">
-      <candidato nome="Flávio Bolsonaro" partido="PL" votos="56104503" pct="47.03" situacao="2º turno" />
-      <candidato nome="Lula" partido="PT" votos="53879538" pct="45.16" situacao="2º turno" />
-      <candidato nome="Augusto Cury" partido="Avante" pct="2.89" situacao="Não eleito" />
+    <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="158745502" comparecimento="125275835" abstencao="33469244" brancos="2300798" nulos="3674249" validos="119300788">
+      <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="56104503" pct="47.03" situacao="2º turno" />
+      <candidato nome="LULA" partido="PT" votos="53879538" pct="45.16" situacao="2º turno" />
+      <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="3448569" pct="2.89" situacao="Não eleito" />
+      <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="2675887" pct="2.24" situacao="Não eleito" />
+      <candidato nome="RONALDO CAIADO" partido="PSD" votos="2605148" pct="2.18" situacao="Não eleito" />
+      <candidato nome="ZEMA" partido="NOVO" votos="326488" pct="0.27" situacao="Não eleito" />
+      <candidato nome="SAMARA" partido="UP" votos="122911" pct="0.10" situacao="Não eleito" />
+      <candidato nome="HERTZ DIAS" partido="PSTU" votos="43103" pct="0.04" situacao="Não eleito" />
+      <candidato nome="CLARIANA BARAO" partido="DC" votos="40043" pct="0.03" situacao="Não eleito" />
+      <candidato nome="EDMILSON COSTA" partido="PCB" votos="22693" pct="0.02" situacao="Não eleito" />
+      <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="16881" pct="0.01" situacao="Não eleito" />
+      <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="15024" pct="0.01" situacao="Não eleito" />
     </cargo>
-    <comparecimento aptos="158745502" compareceram="125275835" abstencaoPct="21.08" />
   </brasil>
   <estados>
     <estado uf="AC" nome="Acre" regiao="Norte">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="64.56" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="613742" comparecimento="488330" abstencao="125412" brancos="5579" nulos="13685" validos="469066">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="302807" pct="64.56" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="134770" pct="28.73" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="13523" pct="2.88" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="8594" pct="1.83" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="7980" pct="1.70" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="573" pct="0.12" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="314" pct="0.07" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="215" pct="0.05" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="140" pct="0.03" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="71" pct="0.02" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="40" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="39" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="2º turno em 25/10">
-        <candidato nome="Mailza Assis" partido="PP" situacao="2º turno" />
-        <candidato nome="Alan Rick" partido="Republicanos" situacao="2º turno" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="613316" comparecimento="487971" abstencao="125345" brancos="8926" nulos="39398" validos="439647">
+        <candidato nome="MAILZA ASSIS" partido="PP" votos="218760" pct="49.76" situacao="2º turno" />
+        <candidato nome="ALAN RICK" partido="REPUBLICANOS" votos="141859" pct="32.27" situacao="2º turno" />
+        <candidato nome="TIÃO BOCALOM" partido="PSDB" votos="44946" pct="10.22" situacao="Não eleito" />
+        <candidato nome="THOR DANTAS" partido="PSB" votos="32963" pct="7.50" situacao="Não eleito" />
+        <candidato nome="EUDO RAFFAEL" partido="PCB" votos="715" pct="0.16" situacao="Não eleito" />
+        <candidato nome="DR.LUISINHO" partido="AGIR" votos="404" pct="0.09" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="AL" nome="Alagoas" regiao="Nordeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="54.73" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="2442126" comparecimento="1938428" abstencao="503698" brancos="33712" nulos="85860" validos="1818856">
+        <candidato nome="LULA" partido="PT" votos="995459" pct="54.73" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="735718" pct="40.45" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="42427" pct="2.33" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="26851" pct="1.48" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="14198" pct="0.78" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="1345" pct="0.07" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="1168" pct="0.06" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="636" pct="0.03" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="431" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="267" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="246" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="110" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="JHC" partido="PSDB" pct="52.19" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="2439190" comparecimento="1935820" abstencao="503370" brancos="56303" nulos="169903" validos="1709614">
+        <candidato nome="JHC" partido="PSDB" votos="892484" pct="52.20" situacao="Eleito" />
+        <candidato nome="RENAN FILHO" partido="MDB" votos="809796" pct="47.37" situacao="Não eleito" />
+        <candidato nome="LENILDA LUNA" partido="UP" votos="6454" pct="0.38" situacao="Não eleito" />
+        <candidato nome="MÁRCIO JAMBO" partido="DEMOCRATA" votos="880" pct="0.05" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="AP" nome="Amapá" regiao="Norte">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="45.71" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" pct="45.67" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="576988" comparecimento="476562" abstencao="100426" brancos="4415" nulos="7289" validos="464858">
+        <candidato nome="LULA" partido="PT" votos="212503" pct="45.71" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="212278" pct="45.67" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="19057" pct="4.10" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="11342" pct="2.44" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="8304" pct="1.79" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="508" pct="0.11" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="341" pct="0.07" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="229" pct="0.05" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="132" pct="0.03" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="62" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="53" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="49" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Dr. Furlan" partido="PSD" pct="62.75" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="576359" comparecimento="476019" abstencao="100340" brancos="2964" nulos="24308" validos="448747">
+        <candidato nome="DR. FURLAN" partido="PSD" votos="281595" pct="62.75" situacao="Eleito" />
+        <candidato nome="CLÉCIO" partido="UNIÃO" votos="165900" pct="36.97" situacao="Não eleito" />
+        <candidato nome="CARLOS CLEY" partido="PSTU" votos="561" pct="0.13" situacao="Não eleito" />
+        <candidato nome="DELEGADO MARCOS" partido="DC" votos="376" pct="0.08" situacao="Não eleito" />
+        <candidato nome="JAIRO PALHETA" partido="PCO" votos="315" pct="0.07" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="AM" nome="Amazonas" regiao="Norte">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="48.16" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" pct="45.00" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="2798611" comparecimento="2234549" abstencao="564062" brancos="24402" nulos="39384" validos="2170763">
+        <candidato nome="LULA" partido="PT" votos="1046996" pct="48.23" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="976764" pct="45.00" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="77531" pct="3.57" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="35411" pct="1.63" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="28310" pct="1.30" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="1867" pct="0.09" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="1781" pct="0.08" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="929" pct="0.04" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="457" pct="0.02" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="291" pct="0.01" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="265" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="161" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="2º turno em 25/10">
-        <candidato nome="Omar Aziz" partido="PSD" situacao="2º turno" pct="40.38" />
-        <candidato nome="Professora Maria do Carmo" partido="PL" situacao="2º turno" pct="24.72" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="2796053" comparecimento="2232271" abstencao="563782" brancos="50340" nulos="109946" validos="2071985">
+        <candidato nome="OMAR AZIZ" partido="PSD" votos="841846" pct="40.63" situacao="2º turno" />
+        <candidato nome="PROFESSORA MARIA DO CARMO" partido="PL" votos="507335" pct="24.49" situacao="2º turno" />
+        <candidato nome="ROBERTO CIDADE" partido="UNIÃO" votos="453896" pct="21.91" situacao="Não eleito" />
+        <candidato nome="DAVID ALMEIDA" partido="AVANTE" votos="218490" pct="10.54" situacao="Não eleito" />
+        <candidato nome="CABO DACIOLO" partido="MOBILIZA" votos="36176" pct="1.75" situacao="Não eleito" />
+        <candidato nome="ISAEL MUNDURUKU" partido="REDE" votos="11459" pct="0.55" situacao="Não eleito" />
+        <candidato nome="GILBERTO VASCONCELOS" partido="PSTU" votos="2783" pct="0.13" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="BA" nome="Bahia" regiao="Nordeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="66.17" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="11312752" comparecimento="9053601" abstencao="2259151" brancos="154936" nulos="338374" validos="8560291">
+        <candidato nome="LULA" partido="PT" votos="5664771" pct="66.17" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="2442585" pct="28.53" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="195451" pct="2.28" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="122705" pct="1.43" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="117518" pct="1.37" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="6497" pct="0.08" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="4649" pct="0.05" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="1791" pct="0.02" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="1676" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="1299" pct="0.02" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="724" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="625" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Jerônimo Rodrigues" partido="PT" pct="55.80" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="11304314" comparecimento="9046179" abstencao="2258135" brancos="233096" nulos="521993" validos="8291090">
+        <candidato nome="JERÔNIMO RODRIGUES" partido="PT" votos="4626509" pct="55.80" situacao="Eleito" />
+        <candidato nome="ACM NETO" partido="UNIÃO" votos="3625227" pct="43.72" situacao="Não eleito" />
+        <candidato nome="RONALDO MANSUR" partido="PSOL" votos="27243" pct="0.33" situacao="Não eleito" />
+        <candidato nome="AROLDO FELIX" partido="UP" votos="5238" pct="0.06" situacao="Não eleito" />
+        <candidato nome="MARIA BONA" partido="PCO" votos="4028" pct="0.05" situacao="Não eleito" />
+        <candidato nome="ARIEL CAPISTRANO" partido="DC" votos="2845" pct="0.03" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="CE" nome="Ceará" regiao="Nordeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="63.29" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" pct="31.27" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="6996545" comparecimento="5910471" abstencao="1086074" brancos="103295" nulos="189362" validos="5617814">
+        <candidato nome="LULA" partido="PT" votos="3555263" pct="63.29" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="1756850" pct="31.27" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="140524" pct="2.50" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="107587" pct="1.92" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="45604" pct="0.81" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="4310" pct="0.08" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="3352" pct="0.06" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="1491" pct="0.03" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="1071" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="783" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="498" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="481" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Elmano de Freitas" partido="PT" pct="53.19" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="6991044" comparecimento="5905522" abstencao="1085522" brancos="170316" nulos="329111" validos="5406095">
+        <candidato nome="ELMANO DE FREITAS" partido="PT" votos="2875573" pct="53.19" situacao="Eleito" />
+        <candidato nome="CIRO GOMES" partido="PSDB" votos="2498891" pct="46.22" situacao="Não eleito" />
+        <candidato nome="DELEGADO HUGGO" partido="MISSÃO" votos="17219" pct="0.32" situacao="Não eleito" />
+        <candidato nome="VERA LÚCIA" partido="NOVO" votos="5701" pct="0.11" situacao="Não eleito" />
+        <candidato nome="SERLEY LEAL" partido="UP" votos="4344" pct="0.08" situacao="Não eleito" />
+        <candidato nome="ZÉ BATISTA" partido="PSTU" votos="2161" pct="0.04" situacao="Não eleito" />
+        <candidato nome="DANILO SOARES" partido="DEMOCRATA" votos="1743" pct="0.03" situacao="Não eleito" />
+        <candidato nome="IERI BRAGA" partido="PCO" votos="463" pct="0.01" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="DF" nome="Distrito Federal" regiao="Centro-Oeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="51.31" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="2258320" comparecimento="1831396" abstencao="426924" brancos="25362" nulos="33226" validos="1772808">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="909616" pct="51.31" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="675627" pct="38.11" situacao="2º turno" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="85076" pct="4.80" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="46714" pct="2.64" situacao="Não eleito" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="45979" pct="2.59" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="4915" pct="0.28" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="2297" pct="0.13" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="828" pct="0.05" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="716" pct="0.04" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="382" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="334" pct="0.02" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="324" pct="0.02" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="2º turno em 25/10">
-        <candidato nome="Celina Leão" partido="PP" situacao="2º turno" pct="49.93" />
-        <candidato nome="Leandro Grass" partido="PT" situacao="2º turno" pct="34.48" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="2243988" comparecimento="1817921" abstencao="426067" brancos="74774" nulos="89910" validos="1651394">
+        <candidato nome="CELINA LEÃO" partido="PP" votos="825530" pct="49.99" situacao="2º turno" />
+        <candidato nome="LEANDRO GRASS" partido="PT" votos="569930" pct="34.51" situacao="2º turno" />
+        <candidato nome="PAULA BELMONTE" partido="PSDB" votos="140765" pct="8.52" situacao="Não eleito" />
+        <candidato nome="KIKO CAPUTO" partido="NOVO" votos="72148" pct="4.37" situacao="Não eleito" />
+        <candidato nome="CAPPELLI" partido="PSB" votos="36828" pct="2.23" situacao="Não eleito" />
+        <candidato nome="PROFESSORA SAMARA MINEIRO" partido="UP" votos="3958" pct="0.24" situacao="Não eleito" />
+        <candidato nome="PROFESSOR ROBSON" partido="PSTU" votos="1640" pct="0.10" situacao="Não eleito" />
+        <candidato nome="ELISSON" partido="AGIR" votos="1172" pct="0.07" situacao="Não eleito" />
+        <candidato nome="RICO PINHEIRO" partido="PRTB" votos="671" pct="0.04" situacao="Não eleito" />
+        <candidato nome="EXPEDITO MENDONÇA" partido="PCO" votos="595" pct="0.04" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="ES" nome="Espírito Santo" regiao="Sudeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="54.78" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="2991650" comparecimento="2352282" abstencao="639368" brancos="43211" nulos="57993" validos="2251078">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="1233194" pct="54.78" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="850028" pct="37.76" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="65121" pct="2.89" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="53236" pct="2.36" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="39097" pct="1.74" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="5873" pct="0.26" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="1973" pct="0.09" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="974" pct="0.04" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="638" pct="0.03" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="388" pct="0.02" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="311" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="245" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="2º turno em 25/10">
-        <candidato nome="Lorenzo Pazolini" partido="Republicanos" situacao="2º turno" pct="49.65" />
-        <candidato nome="Ricardo Ferraço" partido="MDB" situacao="2º turno" pct="34.06" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="2987584" comparecimento="2348612" abstencao="638972" brancos="110040" nulos="126401" validos="2112171">
+        <candidato nome="LORENZO PAZOLINI" partido="REPUBLICANOS" votos="1048633" pct="49.65" situacao="2º turno" />
+        <candidato nome="RICARDO FERRAÇO" partido="MDB" votos="719397" pct="34.06" situacao="2º turno" />
+        <candidato nome="HELDER SALOMÃO" partido="PT" votos="323483" pct="15.32" situacao="Não eleito" />
+        <candidato nome="BRENO BARCELOS" partido="MISSÃO" votos="17988" pct="0.85" situacao="Não eleito" />
+        <candidato nome="RAFAEL DEMUNER" partido="UP" votos="2670" pct="0.13" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="GO" nome="Goiás" regiao="Centro-Oeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="53.61" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" pct="31.06" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="5080590" comparecimento="3971587" abstencao="1109003" brancos="45643" nulos="98121" validos="3827823">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="2051888" pct="53.60" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="1188880" pct="31.06" situacao="2º turno" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="472041" pct="12.33" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="54105" pct="1.41" situacao="Não eleito" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="53849" pct="1.41" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="2672" pct="0.07" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="2087" pct="0.05" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="668" pct="0.02" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="559" pct="0.01" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="468" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="346" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="260" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Daniel Vilela" partido="MDB" pct="59.17" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="5074870" comparecimento="3966488" abstencao="1108382" brancos="170266" nulos="165646" validos="3630576">
+        <candidato nome="DANIEL VILELA" partido="MDB" votos="2148218" pct="59.17" situacao="Eleito" />
+        <candidato nome="WILDER MORAIS" partido="PL" votos="797141" pct="21.96" situacao="Não eleito" />
+        <candidato nome="LUIS CESAR BUENO" partido="PT" votos="356692" pct="9.82" situacao="Não eleito" />
+        <candidato nome="MARCONI PERILLO" partido="PSDB" votos="315676" pct="8.69" situacao="Não eleito" />
+        <candidato nome="LUCIANA AMORIM" partido="UP" votos="11632" pct="0.32" situacao="Não eleito" />
+        <candidato nome="DANILO DA SILVA" partido="PCO" votos="1217" pct="0.03" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="MA" nome="Maranhão" regiao="Nordeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="63.96" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" pct="30.90" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="5183115" comparecimento="4160343" abstencao="1022772" brancos="46315" nulos="103589" validos="4010439">
+        <candidato nome="LULA" partido="PT" votos="2566301" pct="63.99" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="1239040" pct="30.90" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="84830" pct="2.12" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="60387" pct="1.51" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="50155" pct="1.25" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="4584" pct="0.11" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="1795" pct="0.04" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="1459" pct="0.04" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="895" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="475" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="307" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="211" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Eduardo Braide" partido="PSD" pct="54.02" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="5180851" comparecimento="4158395" abstencao="1022456" brancos="93669" nulos="169646" validos="3846156">
+        <candidato nome="EDUARDO BRAIDE" partido="PSD" votos="2104122" pct="54.71" situacao="Eleito" />
+        <candidato nome="ORLEANS BRANDÃO" partido="MDB" votos="1354044" pct="35.21" situacao="Não eleito" />
+        <candidato nome="FELIPE CAMARÃO" partido="PT" votos="374039" pct="9.73" situacao="Não eleito" />
+        <candidato nome="ROBERTO ROCHA" partido="PRTB" votos="48924" pct="1.27" situacao="Não eleito" />
+        <candidato nome="ANDRÉ LUIS" partido="MISSÃO" votos="7905" pct="0.21" situacao="Não eleito" />
+        <candidato nome="SAULO ARCANGELI" partido="PSTU" votos="4693" pct="0.12" situacao="Não eleito" />
+        <candidato nome="REGINALDO LIMA" partido="PCB" votos="1096" pct="0.03" situacao="Não eleito" />
+        <candidato nome="DIMAS CASSIMIRO" partido="PCO" votos="257" pct="0.01" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="MT" nome="Mato Grosso" regiao="Centro-Oeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="65.15" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="2637801" comparecimento="2052133" abstencao="585668" brancos="20756" nulos="38089" validos="1993288">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="1298581" pct="65.15" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="581681" pct="29.18" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="40019" pct="2.01" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="33170" pct="1.66" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="33079" pct="1.66" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="2424" pct="0.12" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="1869" pct="0.09" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="1584" pct="0.08" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="340" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="239" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="172" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="130" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Otaviano Pivetta" partido="Republicanos" pct="60.77" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="2634992" comparecimento="2049718" abstencao="585274" brancos="82690" nulos="110735" validos="1856293">
+        <candidato nome="OTAVIANO PIVETTA" partido="REPUBLICANOS" votos="1128099" pct="60.77" situacao="Eleito" />
+        <candidato nome="WELLINGTON FAGUNDES" partido="PL" votos="430442" pct="23.19" situacao="Não eleito" />
+        <candidato nome="DOUTORA NATASHA" partido="PSD" votos="281548" pct="15.17" situacao="Não eleito" />
+        <candidato nome="RAFAELL MILAS" partido="MISSÃO" votos="10300" pct="0.55" situacao="Não eleito" />
+        <candidato nome="SARGENTO LAUDICÉRIO" partido="AGIR" votos="3210" pct="0.17" situacao="Não eleito" />
+        <candidato nome="MAURICIO COELHO" partido="MOBILIZA" votos="2694" pct="0.15" situacao="Não eleito" />
       </cargo>
     </estado>
-    <estado uf="MS" nome="Mato Grosso do Sul" regiao="Centro-Oeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="58.60" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+    <estado uf="MS" nome="Mato Grosso Do Sul" regiao="Centro-Oeste">
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="2024430" comparecimento="1541220" abstencao="483210" brancos="21270" nulos="29672" validos="1490278">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="873351" pct="58.60" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="516855" pct="34.68" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="39148" pct="2.63" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="31847" pct="2.14" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="23291" pct="1.56" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="2792" pct="0.19" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="1291" pct="0.09" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="626" pct="0.04" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="353" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="332" pct="0.02" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="209" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="183" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Eduardo Riedel" partido="PP" pct="67.07" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="2021869" comparecimento="1539009" abstencao="482860" brancos="80522" nulos="95189" validos="1363298">
+        <candidato nome="EDUARDO RIEDEL" partido="PP" votos="914323" pct="67.07" situacao="Eleito" />
+        <candidato nome="FÁBIO TRAD" partido="PT" votos="322807" pct="23.68" situacao="Não eleito" />
+        <candidato nome="JOÃO HENRIQUE CATAN" partido="NOVO" votos="98677" pct="7.24" situacao="Não eleito" />
+        <candidato nome="DELCIDIO AMARAL" partido="PRD" votos="14431" pct="1.06" situacao="Não eleito" />
+        <candidato nome="ECONOMISTA RENATO GOMES" partido="DC" votos="5589" pct="0.41" situacao="Não eleito" />
+        <candidato nome="LUCIEN REZENDE" partido="PSOL" votos="4444" pct="0.33" situacao="Não eleito" />
+        <candidato nome="DANIEL LEMES" partido="PCO" votos="2115" pct="0.16" situacao="Não eleito" />
+        <candidato nome="JEFERSON BEZERRA" partido="AGIR" votos="912" pct="0.07" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="MG" nome="Minas Gerais" regiao="Sudeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="48.24" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" pct="43.33" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="16372372" comparecimento="12637274" abstencao="3735098" brancos="268302" nulos="392737" validos="11976235">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="5777548" pct="48.24" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="5188936" pct="43.33" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="409737" pct="3.42" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="247209" pct="2.06" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="230423" pct="1.92" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="98407" pct="0.82" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="11026" pct="0.09" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="4085" pct="0.03" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="3411" pct="0.03" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="2300" pct="0.02" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="1732" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="1421" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Cleitinho Azevedo" partido="Republicanos" pct="55.40" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="16361188" comparecimento="12627167" abstencao="3734021" brancos="658416" nulos="556916" validos="11410371">
+        <candidato nome="CLEITINHO AZEVEDO" partido="REPUBLICANOS" votos="6321590" pct="55.40" situacao="Eleito" />
+        <candidato nome="PATRUS ANANIAS" partido="PT" votos="3006088" pct="26.35" situacao="Não eleito" />
+        <candidato nome="FLÁVIO ROSCOE" partido="PL" votos="795193" pct="6.97" situacao="Não eleito" />
+        <candidato nome="MATEUS SIMÕES" partido="PSD" votos="530292" pct="4.65" situacao="Não eleito" />
+        <candidato nome="ALEXANDRE KALIL" partido="PDT" votos="403466" pct="3.54" situacao="Não eleito" />
+        <candidato nome="GABRIEL" partido="MDB" votos="237051" pct="2.08" situacao="Não eleito" />
+        <candidato nome="BEN MENDES" partido="MISSÃO" votos="80308" pct="0.70" situacao="Não eleito" />
+        <candidato nome="INDIRA XAVIER" partido="UP" votos="20662" pct="0.18" situacao="Não eleito" />
+        <candidato nome="PROFESSOR TÚLIO LOPES" partido="PCB" votos="10957" pct="0.10" situacao="Não eleito" />
+        <candidato nome="RAFAEL DUDA" partido="PSTU" votos="4764" pct="0.04" situacao="Não eleito" />
+        <candidato nome="HENRIQUE ÁREAS" partido="PCO" votos="1464" pct="0.01" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="PA" nome="Pará" regiao="Norte">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="49.91" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" pct="44.50" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="6262397" comparecimento="5066504" abstencao="1195893" brancos="54203" nulos="149129" validos="4863172">
+        <candidato nome="LULA" partido="PT" votos="2427237" pct="49.91" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="2163957" pct="44.50" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="125172" pct="2.57" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="84165" pct="1.73" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="51991" pct="1.07" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="3824" pct="0.08" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="3064" pct="0.06" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="1293" pct="0.03" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="1045" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="674" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="442" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="308" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Dr. Daniel" partido="Podemos" pct="51.75" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="6258162" comparecimento="5062750" abstencao="1195412" brancos="106097" nulos="389825" validos="4564841">
+        <candidato nome="DR. DANIEL" partido="PODE" votos="2345721" pct="51.39" situacao="Eleito" />
+        <candidato nome="HANA GHASSAN" partido="MDB" votos="2125084" pct="46.55" situacao="Não eleito" />
+        <candidato nome="ARACELI" partido="PSOL" votos="85857" pct="1.88" situacao="Não eleito" />
+        <candidato nome="GAL LEITE" partido="UP" votos="5503" pct="0.12" situacao="Não eleito" />
+        <candidato nome="WELL MACEDO" partido="PSTU" votos="2676" pct="0.06" situacao="Não eleito" />
+        <candidato nome="RUTH REIS" partido="DEMOCRATA" votos="1987" pct="0.04" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="PB" nome="Paraíba" regiao="Nordeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="61.31" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" pct="33.07" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="3248531" comparecimento="2683988" abstencao="564543" brancos="52297" nulos="117944" validos="2513747">
+        <candidato nome="LULA" partido="PT" votos="1541127" pct="61.31" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="831377" pct="33.07" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="73831" pct="2.94" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="42247" pct="1.68" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="19511" pct="0.78" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="1988" pct="0.08" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="1593" pct="0.06" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="627" pct="0.02" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="604" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="347" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="274" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="221" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Lucas Ribeiro" partido="PP" pct="64.30" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="3241966" comparecimento="2677904" abstencao="564062" brancos="127816" nulos="263466" validos="2286622">
+        <candidato nome="LUCAS RIBEIRO" partido="PP" votos="1470252" pct="64.30" situacao="Eleito" />
+        <candidato nome="EFRAIM FILHO" partido="PL" votos="552836" pct="24.18" situacao="Não eleito" />
+        <candidato nome="CÍCERO LUCENA" partido="MDB" votos="252884" pct="11.06" situacao="Não eleito" />
+        <candidato nome="YURI EZEQUIEL" partido="UP" votos="8272" pct="0.36" situacao="Não eleito" />
+        <candidato nome="CAMILO DUARTE" partido="PCO" votos="2378" pct="0.10" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="PR" nome="Paraná" regiao="Sul">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="59.91" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="8613657" comparecimento="6841457" abstencao="1772200" brancos="122499" nulos="133715" validos="6585243">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="3945345" pct="59.91" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="2054597" pct="31.20" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="205095" pct="3.11" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="177434" pct="2.69" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="171294" pct="2.60" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="17172" pct="0.26" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="6731" pct="0.10" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="2445" pct="0.04" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="2056" pct="0.03" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="1195" pct="0.02" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="962" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="917" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Sergio Moro" partido="PL" pct="50.10" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="8600624" comparecimento="6829615" abstencao="1771009" brancos="278322" nulos="307494" validos="6242274">
+        <candidato nome="SERGIO MORO" partido="PL" votos="3127911" pct="50.11" situacao="Eleito" />
+        <candidato nome="SANDRO ALEX" partido="PSD" votos="1583764" pct="25.37" situacao="Não eleito" />
+        <candidato nome="REQUIÃO FILHO" partido="PDT" votos="1465601" pct="23.48" situacao="Não eleito" />
+        <candidato nome="LUIZ FRANÇA" partido="MISSÃO" votos="44581" pct="0.71" situacao="Não eleito" />
+        <candidato nome="TAYNÁ MIESSA" partido="UP" votos="14193" pct="0.23" situacao="Não eleito" />
+        <candidato nome="DOUTOR ALEXANDRE SALOMÃO" partido="MOBILIZA" votos="4144" pct="0.07" situacao="Não eleito" />
+        <candidato nome="SAMUEL DE MATTOS" partido="PSTU" votos="2080" pct="0.03" situacao="Não eleito" />
+        <candidato nome="ADRIANO FUNILEIRO" partido="PCO" votos="1525" pct="0.02" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="PE" nome="Pernambuco" regiao="Nordeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="63.45" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="7223450" comparecimento="5911062" abstencao="1312388" brancos="109491" nulos="200554" validos="5601017">
+        <candidato nome="LULA" partido="PT" votos="3553971" pct="63.45" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="1738043" pct="31.03" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="137960" pct="2.46" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="85865" pct="1.53" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="73176" pct="1.31" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="6060" pct="0.11" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="2387" pct="0.04" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="1114" pct="0.02" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="869" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="705" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="457" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="410" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Raquel Lyra" partido="PSD" pct="53.27" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="7216989" comparecimento="5905236" abstencao="1311753" brancos="156481" nulos="481903" validos="5266852">
+        <candidato nome="RAQUEL LYRA" partido="PSD" votos="2805438" pct="53.27" situacao="Eleito" />
+        <candidato nome="JOÃO CAMPOS" partido="PSB" votos="2360469" pct="44.82" situacao="Não eleito" />
+        <candidato nome="IVAN MORAES" partido="PSOL" votos="77699" pct="1.48" situacao="Não eleito" />
+        <candidato nome="RENAN" partido="MISSÃO" votos="18340" pct="0.35" situacao="Não eleito" />
+        <candidato nome="PROFESSORA CAMILA" partido="UP" votos="3495" pct="0.07" situacao="Não eleito" />
+        <candidato nome="GUILHERME FONSECA" partido="PSTU" votos="987" pct="0.02" situacao="Não eleito" />
+        <candidato nome="VICTOR ASSIS" partido="PCO" votos="424" pct="0.01" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="PI" nome="Piauí" regiao="Nordeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="70.99" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="2704758" comparecimento="2240883" abstencao="463875" brancos="28329" nulos="66160" validos="2146394">
+        <candidato nome="LULA" partido="PT" votos="1523710" pct="70.99" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="517028" pct="24.09" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="47692" pct="2.22" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="32274" pct="1.50" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="21629" pct="1.01" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="1357" pct="0.06" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="1099" pct="0.05" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="504" pct="0.02" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="443" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="319" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="193" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="146" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Rafael Fonteles" partido="PT" pct="70.90" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="2703064" comparecimento="2239386" abstencao="463678" brancos="76589" nulos="136522" validos="2021200">
+        <candidato nome="RAFAEL FONTELES" partido="PT" votos="1436697" pct="71.08" situacao="Eleito" />
+        <candidato nome="JOEL RODRIGUES" partido="PP" votos="557972" pct="27.61" situacao="Não eleito" />
+        <candidato nome="PROFESSOR GISVALDO" partido="PSOL" votos="10002" pct="0.49" situacao="Não eleito" />
+        <candidato nome="DRA. LÚCIA SANTOS" partido="PSDB" votos="9611" pct="0.48" situacao="Não eleito" />
+        <candidato nome="ELIZEU AGUIAR" partido="NOVO" votos="5141" pct="0.25" situacao="Não eleito" />
+        <candidato nome="GERALDO CARVALHO" partido="PSTU" votos="1858" pct="0.09" situacao="Não eleito" />
+        <candidato nome="SANTIAGO BELIZÁRIO" partido="UP" votos="1777" pct="0.09" situacao="Não eleito" />
+        <candidato nome="LOURDES MELO" partido="PCO" votos="1296" pct="0.06" situacao="Não eleito" />
+        <candidato nome="PROFESSOR JURITY" partido="DC" votos="1102" pct="0.05" situacao="Não eleito" />
+        <candidato nome="RAVENNA DA INCLUSÃO" partido="DEMOCRATA" votos="819" pct="0.04" situacao="Não eleito" />
       </cargo>
     </estado>
-    <estado uf="RJ" nome="Rio de Janeiro" regiao="Sudeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="53.01" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+    <estado uf="RJ" nome="Rio De Janeiro" regiao="Sudeste">
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="12857648" comparecimento="9859802" abstencao="2997846" brancos="201979" nulos="288123" validos="9369700">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="4966844" pct="53.01" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="3693021" pct="39.41" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="247397" pct="2.64" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="211843" pct="2.26" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="199844" pct="2.13" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="21907" pct="0.23" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="14186" pct="0.15" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="4082" pct="0.04" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="3999" pct="0.04" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="2854" pct="0.03" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="1930" pct="0.02" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="1793" pct="0.02" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="2º turno em 25/10">
-        <candidato nome="Douglas Ruas" partido="PL" situacao="2º turno" pct="49.27" />
-        <candidato nome="Eduardo Paes" partido="PSD" situacao="2º turno" pct="42.76" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="12842517" comparecimento="9845867" abstencao="2996650" brancos="501537" nulos="675292" validos="8394627">
+        <candidato nome="DOUGLAS RUAS" partido="PL" votos="4271199" pct="50.88" situacao="2º turno" />
+        <candidato nome="EDUARDO PAES" partido="PSD" votos="3706984" pct="44.16" situacao="2º turno" />
+        <candidato nome="GAROTINHO" partido="REPUBLICANOS" votos="274411" pct="3.27" situacao="Não eleito" />
+        <candidato nome="WILLIAM SIRI" partido="PSOL" votos="235347" pct="2.80" situacao="Não eleito" />
+        <candidato nome="CORONEL BUSNELLO" partido="MISSÃO" votos="84889" pct="1.01" situacao="Não eleito" />
+        <candidato nome="ANDRÉ MARINHO" partido="NOVO" votos="45359" pct="0.54" situacao="Não eleito" />
+        <candidato nome="JULIETE" partido="UP" votos="33430" pct="0.40" situacao="Não eleito" />
+        <candidato nome="CYRO GARCIA" partido="PSTU" votos="14642" pct="0.17" situacao="Não eleito" />
+        <candidato nome="LUAN MONTEIRO" partido="PCO" votos="2777" pct="0.03" situacao="Não eleito" />
       </cargo>
     </estado>
-    <estado uf="RN" nome="Rio Grande do Norte" regiao="Nordeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="59.75" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" pct="34.77" />
+    <estado uf="RN" nome="Rio Grande Do Norte" regiao="Nordeste">
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="2659825" comparecimento="2171013" abstencao="488812" brancos="33172" nulos="65943" validos="2071898">
+        <candidato nome="LULA" partido="PT" votos="1237963" pct="59.75" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="720493" pct="34.77" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="57367" pct="2.77" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="35261" pct="1.70" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="16407" pct="0.79" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="1525" pct="0.07" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="1228" pct="0.06" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="572" pct="0.03" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="405" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="315" pct="0.02" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="185" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="177" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="2º turno em 25/10">
-        <candidato nome="Allyson" partido="União" situacao="2º turno" pct="36.83" />
-        <candidato nome="Cadu de Lula" partido="PT" situacao="2º turno" pct="36.21" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="2656207" comparecimento="2167714" abstencao="488493" brancos="76524" nulos="104522" validos="1986441">
+        <candidato nome="ALLYSON" partido="UNIÃO" votos="733809" pct="36.94" situacao="2º turno" />
+        <candidato nome="CADU DE LULA" partido="PT" votos="718300" pct="36.16" situacao="2º turno" />
+        <candidato nome="ÁLVARO DIAS" partido="PL" votos="530580" pct="26.71" situacao="Não eleito" />
+        <candidato nome="ARINALDA DO MLB" partido="UP" votos="1466" pct="0.07" situacao="Não eleito" />
+        <candidato nome="DÁRIO BARBOSA" partido="PSTU" votos="1388" pct="0.07" situacao="Não eleito" />
+        <candidato nome="GODEIRO LINHARESS" partido="DC" votos="464" pct="0.02" situacao="Não eleito" />
+        <candidato nome="RODRIGO DE BOLSONARO" partido="AGIR" votos="434" pct="0.02" situacao="Não eleito" />
+        <candidato nome="HENRIQUE LYRA" partido="PCO" votos="227" pct="0.01" situacao="Não eleito" />
       </cargo>
     </estado>
-    <estado uf="RS" nome="Rio Grande do Sul" regiao="Sul">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="55.64" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+    <estado uf="RS" nome="Rio Grande Do Sul" regiao="Sul">
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="8522545" comparecimento="6702903" abstencao="1819642" brancos="148339" nulos="131518" validos="6423046">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="3573783" pct="55.64" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="2294759" pct="35.73" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="195296" pct="3.04" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="167558" pct="2.61" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="158821" pct="2.47" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="18988" pct="0.30" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="6632" pct="0.10" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="2146" pct="0.03" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="2066" pct="0.03" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="1043" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="1031" pct="0.02" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="923" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Luciano Zucco" partido="PL" pct="58.05" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="8516465" comparecimento="6697424" abstencao="1819041" brancos="324123" nulos="315858" validos="6055306">
+        <candidato nome="ZUCCO" partido="PL" votos="3516048" pct="58.07" situacao="Eleito" />
+        <candidato nome="JULIANA BRIZOLA" partido="PDT" votos="1917374" pct="31.66" situacao="Não eleito" />
+        <candidato nome="GABRIEL SOUZA" partido="MDB" votos="510698" pct="8.43" situacao="Não eleito" />
+        <candidato nome="MARCELO MARANATA" partido="PSDB" votos="101978" pct="1.68" situacao="Não eleito" />
+        <candidato nome="PRISCILA VOIGT" partido="UP" votos="5716" pct="0.09" situacao="Não eleito" />
+        <candidato nome="REJANE DE OLIVEIRA" partido="PSTU" votos="3492" pct="0.06" situacao="Não eleito" />
+        <candidato nome="CESAR PONTES" partido="PCO" votos="2137" pct="0.04" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="RO" nome="Rondônia" regiao="Norte">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="67.45" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="1265893" comparecimento="991080" abstencao="274813" brancos="9846" nulos="13175" validos="968059">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="652988" pct="67.45" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="250667" pct="25.89" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="25280" pct="2.61" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="19187" pct="1.98" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="16929" pct="1.75" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="1318" pct="0.14" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="843" pct="0.09" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="356" pct="0.04" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="174" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="160" pct="0.02" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="97" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="60" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Marcos Rogério" partido="PL" pct="56.86" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="1265008" comparecimento="990313" abstencao="274695" brancos="23607" nulos="21648" validos="945058">
+        <candidato nome="MARCOS ROGÉRIO" partido="PL" votos="537370" pct="56.86" situacao="Eleito" />
+        <candidato nome="ADAILTON FURIA" partido="PSD" votos="189547" pct="20.06" situacao="Não eleito" />
+        <candidato nome="HILDON CHAVES" partido="UNIÃO" votos="134355" pct="14.22" situacao="Não eleito" />
+        <candidato nome="EXPEDITO NETTO" partido="PT" votos="72851" pct="7.71" situacao="Não eleito" />
+        <candidato nome="PEDRO ABIB" partido="MDB" votos="6591" pct="0.70" situacao="Não eleito" />
+        <candidato nome="SAMUEL COSTA" partido="PSB" votos="4344" pct="0.46" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="RR" nome="Roraima" regiao="Norte">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="71.06" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="401521" comparecimento="332772" abstencao="68749" brancos="2618" nulos="4609" validos="325545">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="231322" pct="71.06" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="74420" pct="22.86" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="8579" pct="2.64" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="6623" pct="2.03" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="3639" pct="1.12" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="337" pct="0.10" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="280" pct="0.09" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="168" pct="0.05" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="60" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="42" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="41" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="34" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Arthur Henrique" partido="PL" pct="69.13" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="400603" comparecimento="331959" abstencao="68644" brancos="3677" nulos="8869" validos="319336">
+        <candidato nome="ARTHUR HENRIQUE" partido="PL" votos="220809" pct="69.15" situacao="Eleito" />
+        <candidato nome="SOLDADO SAMPAIO" partido="REPUBLICANOS" votos="93434" pct="29.26" situacao="Não eleito" />
+        <candidato nome="ROSI AIRES" partido="PSOL" votos="4880" pct="1.53" situacao="Não eleito" />
+        <candidato nome="FARAH MESQUITA" partido="SOLIDARIEDADE" votos="213" pct="0.07" situacao="Não eleito" />
+        <candidato nome="CLÉBIO GENUÍNO" partido="PCO" votos="77" pct="0.02" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="SC" nome="Santa Catarina" regiao="Sul">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="66.65" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="5734651" comparecimento="4648159" abstencao="1086492" brancos="69007" nulos="78255" validos="4500897">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="3000020" pct="66.65" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="1127168" pct="25.04" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="134273" pct="2.98" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="132795" pct="2.95" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="79911" pct="1.78" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="16718" pct="0.37" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="5049" pct="0.11" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="1503" pct="0.03" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="1429" pct="0.03" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="828" pct="0.02" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="643" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="560" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Jorginho Mello" partido="PL" pct="68.98" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="5719541" comparecimento="4634550" abstencao="1084991" brancos="169920" nulos="198989" validos="4265641">
+        <candidato nome="JORGINHO MELLO" partido="PL" votos="2942386" pct="68.98" situacao="Eleito" />
+        <candidato nome="GELSON MERÍSIO" partido="PSB" votos="668021" pct="15.66" situacao="Não eleito" />
+        <candidato nome="JOÃO RODRIGUES" partido="PSD" votos="569263" pct="13.35" situacao="Não eleito" />
+        <candidato nome="MARCELO BRIGADEIRO" partido="MISSÃO" votos="46624" pct="1.09" situacao="Não eleito" />
+        <candidato nome="LAÍS CHAUD" partido="UP" votos="21252" pct="0.50" situacao="Não eleito" />
+        <candidato nome="RALF ZIMMER" partido="PRD" votos="9000" pct="0.21" situacao="Não eleito" />
+        <candidato nome="PROFESSOR MARCUS SODRÉ" partido="PSTU" votos="6682" pct="0.16" situacao="Não eleito" />
+        <candidato nome="BRUNO PEDREIRO DO PCO" partido="PCO" votos="2413" pct="0.06" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="SP" nome="São Paulo" regiao="Sudeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="51.93" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="34122892" comparecimento="26431992" abstencao="7690900" brancos="632801" nulos="916243" validos="24882948">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="12922023" pct="51.93" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="9505413" pct="38.20" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="892368" pct="3.59" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="804310" pct="3.23" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="579571" pct="2.33" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="94635" pct="0.38" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="42532" pct="0.17" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="15815" pct="0.06" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="10563" pct="0.04" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="6129" pct="0.02" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="5160" pct="0.02" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="4429" pct="0.02" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Tarcísio de Freitas" partido="Republicanos" pct="62.65" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="34081699" comparecimento="26394256" abstencao="7687443" brancos="1348262" nulos="1915481" validos="23130513">
+        <candidato nome="TARCÍSIO" partido="REPUBLICANOS" votos="14491874" pct="62.65" situacao="Eleito" />
+        <candidato nome="FERNANDO HADDAD" partido="PT" votos="8423656" pct="36.42" situacao="Não eleito" />
+        <candidato nome="VIVIAN MENDES" partido="UP" votos="80480" pct="0.35" situacao="Não eleito" />
+        <candidato nome="VERA LÚCIA" partido="PSTU" votos="75641" pct="0.33" situacao="Não eleito" />
+        <candidato nome="CARLOS MACHADO" partido="PCB" votos="58862" pct="0.25" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="SE" nome="Sergipe" regiao="Nordeste">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Lula" partido="PT" pct="62.75" situacao="1º lugar" />
-        <candidato nome="Flávio Bolsonaro" partido="PL" situacao="2º lugar" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="1740135" comparecimento="1439082" abstencao="301053" brancos="24859" nulos="50027" validos="1364196">
+        <candidato nome="LULA" partido="PT" votos="856019" pct="62.75" situacao="2º turno" />
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="417839" pct="30.63" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="38895" pct="2.85" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="26651" pct="1.95" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="21405" pct="1.57" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="1158" pct="0.08" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="991" pct="0.07" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="457" pct="0.03" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="331" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="204" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="138" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="108" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="eleito no 1º turno">
-        <candidato nome="Fábio Mitidieri" partido="PSD" pct="59.27" situacao="Eleito" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="1737460" comparecimento="1436609" abstencao="300851" brancos="54754" nulos="154847" validos="1189927">
+        <candidato nome="FÁBIO" partido="PSD" votos="727291" pct="61.12" situacao="Eleito" />
+        <candidato nome="VALMIR DE FRANCISQUINHO" partido="REPUBLICANOS" votos="459908" pct="38.65" situacao="Não eleito" />
+        <candidato nome="DR. HELTON" partido="PSOL" votos="37081" pct="3.12" situacao="Não eleito" />
+        <candidato nome="TATY  CRISTINA DE JESUS" partido="DC" votos="2728" pct="0.23" situacao="Não eleito" />
       </cargo>
     </estado>
     <estado uf="TO" nome="Tocantins" regiao="Norte">
-      <cargo nome="Presidente" status="final" urnasApuradasPct="100">
-        <candidato nome="Flávio Bolsonaro" partido="PL" pct="50.44" situacao="1º lugar" />
-        <candidato nome="Lula" partido="PT" situacao="2º lugar" pct="43.42" />
+      <cargo nome="Presidente" status="final" urnasApuradasPct="100" aptos="1182023" comparecimento="965196" abstencao="216827" brancos="8344" nulos="26405" validos="930447">
+        <candidato nome="FLAVIO BOLSONARO" partido="PL" votos="469321" pct="50.44" situacao="2º turno" />
+        <candidato nome="LULA" partido="PT" votos="404009" pct="43.42" situacao="2º turno" />
+        <candidato nome="ESCRITOR AUGUSTO CURY" partido="AVANTE" votos="22434" pct="2.41" situacao="Não eleito" />
+        <candidato nome="RONALDO CAIADO" partido="PSD" votos="20189" pct="2.17" situacao="Não eleito" />
+        <candidato nome="RENAN SANTOS" partido="MISSÃO" votos="12983" pct="1.40" situacao="Não eleito" />
+        <candidato nome="ZEMA" partido="NOVO" votos="595" pct="0.06" situacao="Não eleito" />
+        <candidato nome="SAMARA" partido="UP" votos="395" pct="0.04" situacao="Não eleito" />
+        <candidato nome="CLARIANA BARAO" partido="DC" votos="171" pct="0.02" situacao="Não eleito" />
+        <candidato nome="EDMILSON COSTA" partido="PCB" votos="117" pct="0.01" situacao="Não eleito" />
+        <candidato nome="HERTZ DIAS" partido="PSTU" votos="101" pct="0.01" situacao="Não eleito" />
+        <candidato nome="VETERINÁRIO WILSON GRASSI" partido="DEMOCRATA" votos="67" pct="0.01" situacao="Não eleito" />
+        <candidato nome="RUI COSTA PIMENTA" partido="PCO" votos="65" pct="0.01" situacao="Não eleito" />
       </cargo>
-      <cargo nome="Governador" status="final" urnasApuradasPct="100" resultado="2º turno em 25/10">
-        <candidato nome="Professora Dorinha" partido="União" situacao="2º turno" pct="45.52" />
-        <candidato nome="Vicentinho Júnior" partido="PSDB" situacao="2º turno" />
+      <cargo nome="Governador" status="final" urnasApuradasPct="100" aptos="1180433" comparecimento="963810" abstencao="216623" brancos="27085" nulos="88096" validos="848629">
+        <candidato nome="PROFESSORA DORINHA" partido="UNIÃO" votos="386260" pct="45.52" situacao="2º turno" />
+        <candidato nome="VICENTINHO JÚNIOR" partido="PSDB" votos="372848" pct="43.94" situacao="2º turno" />
+        <candidato nome="LAUREZ MOREIRA" partido="PSD" votos="69967" pct="8.24" situacao="Não eleito" />
+        <candidato nome="ATAIDES DE OLIVEIRA" partido="NOVO" votos="13173" pct="1.55" situacao="Não eleito" />
+        <candidato nome="PROF WITER NAVES" partido="PSOL" votos="5109" pct="0.60" situacao="Não eleito" />
+        <candidato nome="DU PEREIRA" partido="DC" votos="1272" pct="0.15" situacao="Não eleito" />
       </cargo>
     </estado>
   </estados>
