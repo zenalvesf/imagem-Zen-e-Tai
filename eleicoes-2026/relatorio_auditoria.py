@@ -31,6 +31,8 @@ EXPLICA = {
     "Eleitor suspenso pelo mesário (não concluiu o voto)": "Eleitor saiu sem terminar; os cargos que faltavam viraram nulo.",
     "ALERTA: Habilitação cancelada durante reconhecimento biométrico": "Leitura da digital cancelada e refeita.",
     "ALERTA: Eleitor já justificou": "Eleitor tinha justificado ausência e foi votar mesmo assim.",
+    "Urna caiu logo após o eleitor confirmar o último cargo (linha 'computado' ausente no log)":
+        "Voto completo; a urna travou antes de gravar a linha final no log.",
     "Voto interrompido (urna desligada/reiniciada) e refeito pelo eleitor":
         "Urna desligada no meio de um voto; o voto parcial foi descartado e o eleitor votou de novo.",
 }
@@ -71,6 +73,8 @@ def ler_estado(pasta, uf, casos):
                         m["suspensos"] += n
                     if nome.startswith("Voto interrompido"):
                         m["interrompidos"] += n
+                    if nome.startswith("Urna caiu logo após"):
+                        m["caiu_apos"] += n
         comp = d["comparacao"]
         m["totais"] = len(comp)
         m["totais_ok"] = sum(c["bate"] == "OK" for c in comp)
@@ -253,6 +257,7 @@ code{{font-family:var(--mono);font-size:13px}}
       <li><b>{nf(tot['agregadas'])} seções agregadas.</b> Seções pequenas cujos eleitores votam na urna de outra seção. Não têm arquivo próprio, e os votos estão no BU da seção principal.</li>
       <li><b>{nf(tot['trocas'])} urnas substituídas durante a votação.</b> O log da urna com defeito vem dentro do arquivo de log, e somando os logs o total bate com o BU.</li>
       <li><b>{nf(tot['interrompidos'])} votos interrompidos.</b> A urna foi desligada ou reiniciada no meio do voto de um eleitor. O voto parcial foi descartado, o eleitor votou de novo desde o início, e só o voto completo entra no BU.</li>
+      <li><b>{nf(tot['caiu_apos'])} votos completos sem a linha "computado" no log.</b> O eleitor confirmou todos os cargos e a urna travou antes de gravar essa linha. O voto foi gravado, e o BU confirma.</li>
       <li><b>{nf(tot['suspensos'])} eleitores não concluíram o voto.</b> O mesário suspendeu, e a urna registrou "voto nulo por suspensão" nos cargos que faltavam.</li>
       <li><b>{nf(tot['tecnicos'])} "nulos técnicos".</b> Votos digitados para um número de candidato fora da lista válida do TSE. O BU registra o número, e o TSE conta como nulo.</li>
     </ul>
