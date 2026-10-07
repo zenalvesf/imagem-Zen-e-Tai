@@ -338,6 +338,10 @@ def processar_secao(uf, mun, zona, secao):
             log["suspensos"] = dict(Counter(log["suspensos"]) + q["suspensos"])
         rot = "voto gravado no BU" if gravado else "voto não gravado" if fecha(False) else "indeterminado"
         log["eventos"][f"Urna travou logo após o eleitor confirmar o último cargo ({rot})"] = q["n"]
+    if comp is not None and comp > log["computados"]:
+        log["eventos"][f"Log publicado tem {comp - log['computados']} eleitores a menos que o BU"] = 1
+    elif comp is not None and comp < log["computados"]:
+        log["eventos"][f"Log publicado tem {log['computados'] - comp} eleitores a mais que o BU"] = 1
     lin.update({"aptos_bu": aptos, "comparecimento_bu": comp, "votos_computados_log": log["computados"],
                 "log_bate_bu": "OK" if comp == log["computados"] else "DIFERENTE",
                 "primeiro_voto": log["primeiro_voto"], "ultimo_voto": log["ultimo_voto"],
