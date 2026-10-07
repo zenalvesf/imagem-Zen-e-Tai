@@ -40,7 +40,7 @@ def nf(n):
     return f"{n:,}".replace(",", ".")
 
 
-def ler_estado(pasta, uf):
+def ler_estado(pasta, uf, casos):
     muns, eventos, hora = [], Counter(), Counter()
     tot = Counter()
     for f in sorted(glob.glob(os.path.join(pasta, f"resumo_{uf.lower()}[0-9]*.json"))):
@@ -55,6 +55,8 @@ def ler_estado(pasta, uf):
                 continue
             m["urnas"] += 1
             m["ok"] += s.get("log_bate_bu") == "OK"
+            if s.get("log_bate_bu") != "OK":
+                casos.append((uf, d["municipio"].title(), s))
             m["comparecimento"] += int(s.get("comparecimento_bu") or 0)
             m["aptos"] += int(s.get("aptos_bu") or 0)
             m["trocas"] += int(s.get("urnas_no_log") or 1) > 1
@@ -100,8 +102,9 @@ def main():
                     oficial[r["uf"]] = int(r["comparecimento"])
 
     estados, tot, eventos, hora = [], Counter(), Counter(), defaultdict(Counter)
+    casos = []
     for uf in ufs:
-        muns, t, ev, h = ler_estado(a.saida_auditoria, uf)
+        muns, t, ev, h = ler_estado(a.saida_auditoria, uf, casos)
         if not muns:
             continue
         t["municipios"] = len(muns)
@@ -155,10 +158,23 @@ def main():
 <th>Log = BU</th><th>BUs = TSE</th><th>Urnas trocadas</th><th>Voto não concluído</th></tr></thead>
 <tbody>{linhas}</tbody></table></div></details>"""
 
+    linhas_casos = "".join(
+        f"<tr><td>{NOMES.get(uf, uf)}</td><td>{html.escape(mun)}</td><td>{c['zona']}</td><td>{c['secao']}</td>"
+        f"<td>{nf(int(c.get('comparecimento_bu') or 0))}</td><td>{nf(int(c.get('votos_computados_log') or 0))}</td>"
+        f"<td class='muted'>{html.escape('; '.join(e for e in (c.get('eventos_log') or '').split('; ') if not e.startswith('ALERTA')))}</td></tr>"
+        for uf, mun, c in casos)
+    bloco_casos = "" if not casos else f"""<section>
+    <h2>Casos a examinar ({len(casos)})</h2>
+    <p class="muted" style="margin-bottom:10px">Urnas em que o log publicado não confere com o BU. {'A soma dos BUs bate com o TSE em todos os municípios, inclusive nesses: a diferença está no registro (log), não nos votos.' if tot['totais_ok'] == tot['totais'] else 'Há também municípios em que a soma dos BUs difere do TSE; veja a lista por estado.'}</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Estado</th><th>Município</th><th>Zona</th><th>Seção</th><th>Eleitores no BU</th><th>Eleitores no log</th><th style="text-align:left">O que o log mostra</th></tr></thead>
+      <tbody>{linhas_casos}</tbody>
+    </table></div>
+  </section>"""
     linhas_ev = "".join(
         f"<tr><td>{html.escape(k.replace('ALERTA: ', '').replace('ERRO: ', 'Erro: ')[:110])}</td>"
         f"<td>{nf(v)}</td><td class='muted'>{html.escape(EXPLICA.get(k, ''))}</td></tr>"
-        for k, v in eventos.most_common(14) if not k.startswith("Urna substituída"))
+        for k, v in eventos.most_common(14) if not k.startswith(("Urna substituída", "Log publicado traz")))
 
     titulo = "Auditoria de Urnas" if len(estados) > 1 else f"Auditoria de Urnas {estados[0][0]}"
     pagina = f"""<title>{titulo}</title>
@@ -228,6 +244,8 @@ code{{font-family:var(--mono);font-size:13px}}
       <tbody>{linhas_uf}</tbody>
     </table></div>
   </section>
+
+  {bloco_casos}
 
   <section>
     <h2>O que parecia diferença, mas é previsto</h2>

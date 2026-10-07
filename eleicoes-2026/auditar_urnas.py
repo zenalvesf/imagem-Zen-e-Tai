@@ -192,7 +192,9 @@ def textos_log(dados):
                 yield z.read(nome).decode("latin-1")
 
 
-def ler_log(dados):
+def ler_log(dados, secao=None):
+    """secao: número da seção auditada. Linhas de uma urna carregada com outra seção
+    (troca de mídia entre urnas) não entram na conta e viram ocorrência."""
     textos = list(textos_log(dados))
     # um log por urna; em ordem cronológica, mantendo a ordem original das linhas de cada um
     textos.sort(key=lambda t: next((l[:19] for l in t.splitlines() if l.startswith("04/10/2026")), "~"))
@@ -203,6 +205,7 @@ def ler_log(dados):
     # se a urna é desligada ou reiniciada no meio, o voto parcial é descartado e o eleitor
     # vota de novo desde o início
     pend_conf, pend_susp = Counter(), Counter()
+    secao_da_urna, alheios = {}, Counter()
 
     def descartar():
         if pend_conf or pend_susp:
@@ -215,8 +218,15 @@ def ler_log(dados):
             p = linha.split("\t")
             if len(p) < 5 or not linha.startswith("04/10/2026"):
                 continue
-            data, nivel, _id, app, msg = p[:5]
+            data, nivel, id_urna, app, msg = p[:5]
+            if msg.startswith("Seção Eleitoral: "):
+                secao_da_urna[id_urna] = msg.split(": ", 1)[1].strip()
             if app != "VOTA":
+                continue
+            outra = secao_da_urna.get(id_urna)
+            if secao and outra not in (None, secao, "0000"):
+                if msg == "O voto do eleitor foi computado":
+                    alheios[outra] += 1
                 continue
             if msg == "Eleitor foi habilitado" or msg in ("Votação suspensa", "Iniciando aplicação - 1º turno"):
                 descartar()
@@ -240,6 +250,8 @@ def ler_log(dados):
             elif msg == "Eleitor foi suspenso pelo mesário":
                 eventos["Eleitor suspenso pelo mesário (não concluiu o voto)"] += 1
     descartar()
+    for outra, n in alheios.items():
+        eventos[f"Log publicado traz trecho da urna da seção {outra} ({n} votos dela, ignorados)"] += 1
     if len(textos) > 1:
         eventos[f"Urna substituída durante a votação ({len(textos)} logs de urna)"] += 1
     return {"computados": computados, "confirmados": dict(confirmados), "suspensos": dict(suspensos),
@@ -284,7 +296,7 @@ def processar_secao(uf, mun, zona, secao):
     if "bu" not in arq or "log" not in arq:
         return {**lin, "situacao": f"{lin['situacao']} (sem BU/log)"}
     bu = ler_bu(baixar_mem(f"{base}/{h['hash']}/{arq['bu']}"))
-    log = ler_log(baixar_mem(f"{base}/{h['hash']}/{arq['log']}"))
+    log = ler_log(baixar_mem(f"{base}/{h['hash']}/{arq['log']}"), secao)
     cargos, aptos = {}, None
     for ent in bu.values():
         aptos = aptos or ent["aptos"]
