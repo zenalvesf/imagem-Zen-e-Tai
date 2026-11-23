@@ -1,0 +1,908 @@
+<title>Tradutor de Voz</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  /* Layout: coluna central. Abas Conversa / Traduzir. Teal = pessoa A / ação, âmbar = pessoa B. */
+  :root {
+    --bg: #eef1f6; --surface: #ffffff; --surface-2: #f4f6fa;
+    --ink: #10151f; --muted: #5a6474; --line: #dde2ec;
+    --accent: #0f766e; --accent-ink: #ffffff; --accent-soft: #d6f0ec;
+    --warm: #c25d14; --warm-soft: #fbe6d2; --danger: #c0392b;
+    --radius: 18px;
+    --shadow: 0 1px 2px rgba(16,21,31,.05), 0 10px 30px -12px rgba(16,21,31,.18);
+    --font-display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+    --font-body: "Figtree", system-ui, -apple-system, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c0f15; --surface: #161b24; --surface-2: #1d232e;
+      --ink: #eef1f6; --muted: #9aa5b6; --line: #2a313d;
+      --accent: #2dd4bf; --accent-ink: #052620; --accent-soft: #123b36;
+      --warm: #e8954a; --warm-soft: #3a2a17; --danger: #f0756a;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 34px -14px rgba(0,0,0,.6);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c0f15; --surface: #161b24; --surface-2: #1d232e;
+    --ink: #eef1f6; --muted: #9aa5b6; --line: #2a313d;
+    --accent: #2dd4bf; --accent-ink: #052620; --accent-soft: #123b36;
+    --warm: #e8954a; --warm-soft: #3a2a17; --danger: #f0756a;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 14px 34px -14px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-body); line-height: 1.45; -webkit-font-smoothing: antialiased; }
+  .wrap {
+    max-width: 580px; margin: 0 auto;
+    padding-block: clamp(18px, 4vw, 36px) 36px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: flex; flex-direction: column; gap: 14px;
+  }
+
+  header { text-align: center; }
+  h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 6.5vw, 2.1rem); letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+  h1 .dot { color: var(--accent); }
+  .tagline { color: var(--muted); font-size: .92rem; margin-top: 3px; }
+
+  .tabs { display: flex; gap: 4px; padding: 4px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 14px; }
+  .tab { flex: 1; padding: 9px 10px; border-radius: 10px; background: transparent; color: var(--muted); font-family: var(--font-body); font-weight: 600; font-size: .95rem; border: none; cursor: pointer; }
+  .tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+  .tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 15px; display: flex; flex-direction: column; gap: 12px; }
+
+  .lang-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); font-weight: 600; }
+
+  select.lang {
+    appearance: none; font-family: var(--font-body); font-weight: 600; font-size: 1rem;
+    color: var(--ink); background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 11px; padding: 9px 34px 9px 13px; cursor: pointer; max-width: 100%;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' fill='none' stroke='%235a6474' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat; background-position: right 12px center;
+  }
+  select.lang:focus-visible, .lang-row select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .lang-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+  /* Barra de conversas */
+  .convo-bar { display: flex; gap: 8px; align-items: center; }
+  .convo-select {
+    appearance: none; flex: 1; min-width: 0; font-family: var(--font-body); font-weight: 600; font-size: .95rem;
+    color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 11px;
+    padding: 9px 30px 9px 12px; cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' fill='none' stroke='%235a6474' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat; background-position: right 10px center;
+    text-overflow: ellipsis;
+  }
+  .convo-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .icon-mini { width: 40px; height: 40px; flex: none; display: inline-grid; place-items: center; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink); border-radius: 11px; cursor: pointer; }
+  .icon-mini:hover { background: var(--bg); }
+  .icon-mini:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .icon-mini svg { width: 19px; height: 19px; }
+
+  .convo-langs { display: flex; align-items: stretch; gap: 8px; }
+  .convo-langs .col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+  .convo-langs .col select.lang { width: 100%; }
+  .convo-langs .mid { display: flex; align-items: center; padding-top: 18px; }
+
+  .name-input { font-family: var(--font-body); font-weight: 700; font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; border: none; background: transparent; color: var(--accent); width: 100%; padding: 2px 0; min-width: 0; }
+  .name-input.b { color: var(--warm); text-align: right; }
+  .name-input::placeholder { color: currentColor; opacity: .55; }
+  .name-input:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 4px; }
+
+  .voice-wrap { display: flex; align-items: center; gap: 5px; }
+  .voice-wrap.b { justify-content: flex-end; }
+  .voice-wrap svg { width: 13px; height: 13px; color: var(--muted); flex: none; }
+  .voice-select {
+    appearance: none; min-width: 0; font-family: var(--font-body); font-size: .8rem; color: var(--muted);
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 9px; padding: 4px 22px 4px 8px; cursor: pointer; max-width: 100%;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' fill='none' stroke='%235a6474' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat; background-position: right 8px center;
+  }
+  .voice-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .transcript { display: flex; flex-direction: column; gap: 10px; min-height: 200px; max-height: 42vh; overflow-y: auto; padding: 4px 2px; scroll-behavior: smooth; }
+  .empty { margin: auto; text-align: center; color: var(--muted); font-size: .92rem; max-width: 34ch; padding: 16px 0; }
+  .empty svg { width: 34px; height: 34px; opacity: .5; margin-bottom: 8px; }
+
+  .bubble { max-width: 85%; padding: 10px 13px; border-radius: 15px; display: flex; flex-direction: column; gap: 4px; }
+  .bubble.a { align-self: flex-start; background: var(--accent-soft); border-bottom-left-radius: 5px; }
+  .bubble.b { align-self: flex-end; background: var(--warm-soft); border-bottom-right-radius: 5px; }
+  .bubble .who { font-size: .66rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .bubble.a .who { color: var(--accent); } .bubble.b .who { color: var(--warm); }
+  .bubble .trans { font-size: 1.1rem; line-height: 1.35; word-break: break-word; }
+  .bubble .orig { font-size: .82rem; color: var(--muted); font-style: italic; word-break: break-word; }
+  .bubble.pending .trans { color: var(--muted); }
+  .bubble .play { align-self: flex-start; margin-top: 2px; display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; border: none; cursor: pointer; background: rgba(0,0,0,.06); color: var(--ink); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bubble .play { background: rgba(255,255,255,.08); } }
+  :root[data-theme="dark"] .bubble .play { background: rgba(255,255,255,.08); }
+  .bubble .play svg { width: 15px; height: 15px; }
+
+  .settings { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 9px 16px; font-size: .85rem; color: var(--muted); padding: 2px 0; }
+  .settings .toggle { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; user-select: none; }
+  .settings .toggle.on { color: var(--ink); font-weight: 600; }
+  .settings input[type=checkbox] { accent-color: var(--accent); width: 17px; height: 17px; cursor: pointer; }
+  .settings .speed { display: inline-flex; align-items: center; gap: 8px; }
+  .settings input[type=range] { accent-color: var(--accent); cursor: pointer; width: 108px; max-width: 40vw; }
+  .settings .rate-val { font-family: var(--font-mono); font-size: .78rem; color: var(--ink); min-width: 2.6em; }
+
+  .live-status { min-height: 1.2em; text-align: center; font-size: .85rem; color: var(--muted); }
+  .live-status.err { color: var(--danger); }
+  .live-status .txt { color: var(--ink); }
+
+  .mic-row { display: flex; gap: 10px; }
+  .mic-btn { flex: 1; min-width: 0; padding: 14px 10px; border-radius: 15px; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; font-family: var(--font-body); font-weight: 700; font-size: .98rem; color: #fff; transition: transform .08s ease, filter .15s ease; }
+  .mic-btn:active { transform: translateY(1px); }
+  .mic-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .mic-btn.a { background: var(--accent); color: var(--accent-ink); }
+  .mic-btn.b { background: var(--warm); color: #fff; }
+  .mic-btn.auto { background: linear-gradient(90deg, var(--accent), var(--warm)); color: #fff; width: 100%; }
+  .mic-btn svg { width: 24px; height: 24px; }
+  .mic-btn .lbl { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mic-btn.listening { animation: pulse 1.3s ease-in-out infinite; }
+  .mic-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .auto-wrap { display: flex; }
+  @keyframes pulse { 0%{filter:brightness(1)} 50%{filter:brightness(1.2)} 100%{filter:brightness(1)} }
+
+  .text-fallback { display: flex; gap: 8px; flex-wrap: wrap; align-items: stretch; }
+  .text-fallback input { flex: 1 1 100%; min-width: 0; font-family: var(--font-body); font-size: 1rem; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 11px; padding: 10px 12px; }
+  .text-fallback input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .send-mini { flex: 1; padding: 9px 12px; border-radius: 11px; border: none; cursor: pointer; font-family: var(--font-body); font-weight: 600; font-size: .9rem; color: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .send-mini svg { width: 15px; height: 15px; }
+  .send-mini.a { background: var(--accent); color: var(--accent-ink); } .send-mini.b { background: var(--warm); color: #fff; }
+
+  .convo-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .sync-status { font-size: .76rem; color: var(--muted); display: inline-flex; align-items: center; gap: 5px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .link-btn { background: none; border: none; color: var(--muted); font-family: var(--font-body); font-size: .85rem; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 4px; display: inline-flex; align-items: center; gap: 5px; }
+  .link-btn:hover { color: var(--ink); }
+  .link-btn svg { width: 14px; height: 14px; }
+
+  textarea, .output { width: 100%; min-height: 86px; font-family: var(--font-body); font-size: 1.1rem; line-height: 1.4; color: var(--ink); background: var(--surface-2); border: 1px solid var(--line); border-radius: 13px; padding: 13px; resize: vertical; min-width: 0; }
+  textarea::placeholder { color: var(--muted); }
+  textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .output { resize: none; white-space: pre-wrap; word-break: break-word; }
+  .output.placeholder { color: var(--muted); }
+  .panel.target { background: linear-gradient(180deg, var(--accent-soft), var(--surface) 55%); }
+
+  .controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .controls .spacer { flex: 1; }
+
+  .btn-icon { width: 44px; height: 44px; display: inline-grid; place-items: center; background: var(--surface-2); border: 1px solid var(--line); color: var(--ink); border-radius: 12px; flex: none; cursor: pointer; }
+  .btn-icon:hover:not(:disabled) { background: var(--bg); }
+  .btn-icon:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn-icon:disabled { opacity: .45; cursor: not-allowed; }
+  .btn-icon svg { width: 21px; height: 21px; }
+
+  .mic { width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); border: none; display: inline-grid; place-items: center; flex: none; cursor: pointer; box-shadow: 0 6px 18px -6px var(--accent); }
+  .mic:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+  .mic:disabled { opacity: .45; cursor: not-allowed; }
+  .mic svg { width: 26px; height: 26px; }
+  .mic.listening { animation: pulse 1.3s ease-in-out infinite; background: var(--danger); }
+
+  .btn-translate { background: var(--accent); color: var(--accent-ink); padding: 13px 22px; font-size: 1.05rem; font-weight: 700; border-radius: 13px; width: 100%; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 9px; }
+  .btn-translate:hover:not(:disabled) { background: color-mix(in srgb, var(--accent) 88%, black); }
+  .btn-translate:disabled { opacity: .45; cursor: not-allowed; }
+
+  .swap-wrap { display: flex; justify-content: center; margin: -8px 0; position: relative; z-index: 2; }
+  .swap { width: 42px; height: 42px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); color: var(--accent); display: grid; place-items: center; box-shadow: var(--shadow); cursor: pointer; }
+  .swap:hover { background: var(--surface-2); }
+  .swap svg { width: 20px; height: 20px; }
+
+  .hint { font-size: .82rem; color: var(--muted); text-align: center; min-height: 1.1em; }
+  .hint.err { color: var(--danger); }
+
+  footer { text-align: center; color: var(--muted); font-size: .76rem; margin-top: 2px; line-height: 1.5; }
+
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Tradutor de Voz<span class="dot">.</span></h1>
+    <p class="tagline">Converse frente a frente com quem fala outro idioma.</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Modo">
+    <button class="tab" id="tabConvo" role="tab" aria-selected="true" aria-controls="panelConvo">Conversa</button>
+    <button class="tab" id="tabTrans" role="tab" aria-selected="false" aria-controls="panelTrans">Traduzir</button>
+  </div>
+
+  <!-- ============ CONVERSA ============ -->
+  <div id="panelConvo" role="tabpanel" aria-labelledby="tabConvo">
+    <section class="panel">
+      <div class="convo-bar">
+        <select class="convo-select" id="convoSelect" aria-label="Escolher conversa"></select>
+        <button class="icon-mini" id="newConvo" title="Nova conversa" aria-label="Nova conversa">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+        </button>
+        <button class="icon-mini" id="delConvo" title="Apagar esta conversa" aria-label="Apagar esta conversa">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+      </div>
+
+      <div class="convo-langs">
+        <div class="col">
+          <input class="name-input a" id="nameA" maxlength="24" placeholder="Pessoa 1" aria-label="Nome da pessoa 1">
+          <select class="lang" id="langA" aria-label="Idioma da pessoa 1"></select>
+          <div class="voice-wrap a" id="voiceWrapA" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+            <select class="voice-select" id="voiceA" aria-label="Voz da pessoa 1"></select>
+          </div>
+        </div>
+        <div class="mid">
+          <button class="swap" id="convoSwap" title="Trocar os idiomas" aria-label="Trocar os idiomas">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+          </button>
+        </div>
+        <div class="col">
+          <input class="name-input b" id="nameB" maxlength="24" placeholder="Pessoa 2" aria-label="Nome da pessoa 2">
+          <select class="lang" id="langB" aria-label="Idioma da pessoa 2"></select>
+          <div class="voice-wrap b" id="voiceWrapB" hidden>
+            <select class="voice-select" id="voiceB" aria-label="Voz da pessoa 2"></select>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="transcript" id="transcript" aria-live="polite" aria-label="Conversa"></div>
+
+      <div class="settings">
+        <label class="toggle" id="lblHands"><input type="checkbox" id="tHands"> Mãos livres</label>
+        <label class="toggle" id="lblAuto"><input type="checkbox" id="tAuto"> Detectar idioma</label>
+        <span class="speed">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
+          <input type="range" id="rate" min="0.6" max="1.4" step="0.1" value="1" aria-label="Velocidade da voz">
+          <span class="rate-val" id="rateVal">1.0&times;</span>
+        </span>
+      </div>
+
+      <p class="live-status" id="liveStatus"></p>
+
+      <div class="mic-row" id="sideButtons">
+        <button class="mic-btn a" id="micA">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          <span class="lbl" id="micALbl">Português</span>
+        </button>
+        <button class="mic-btn b" id="micB">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          <span class="lbl" id="micBLbl">Inglês</span>
+        </button>
+      </div>
+      <div class="auto-wrap" id="autoWrap" hidden>
+        <button class="mic-btn auto" id="autoBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          <span class="lbl">Falar &mdash; detectar idioma</span>
+        </button>
+      </div>
+
+      <div class="text-fallback" id="textFallback">
+        <input type="text" id="convoInput" placeholder="Ou escreva aqui e envie como&hellip;" aria-label="Escrever mensagem">
+        <button class="send-mini a" id="sendA">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+          <span id="sendALbl">Português</span>
+        </button>
+        <button class="send-mini b" id="sendB">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg>
+          <span id="sendBLbl">Inglês</span>
+        </button>
+      </div>
+
+      <div class="convo-actions">
+        <span class="sync-status" id="syncStatus"></span>
+        <button class="link-btn" id="copyConvo" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+          Copiar conversa
+        </button>
+      </div>
+    </section>
+    <footer>
+      Toque no idioma de quem fala; a tradução é dita em voz alta para a outra pessoa. <b>Mãos livres</b> mantém o microfone ouvindo frase após frase.<br>
+      As conversas ficam salvas e sincronizadas na sua conta.
+    </footer>
+  </div>
+
+  <!-- ============ TRADUZIR ============ -->
+  <div id="panelTrans" role="tabpanel" aria-labelledby="tabTrans" hidden>
+    <section class="panel source" aria-label="Texto de origem">
+      <div class="lang-row">
+        <span class="lang-label">De</span>
+        <select class="lang" id="srcLang" aria-label="Idioma de origem"></select>
+      </div>
+      <div class="voice-wrap" id="voiceWrapSrc" hidden style="justify-content:flex-end">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+        <select class="voice-select" id="voiceSrc" aria-label="Voz do idioma de origem"></select>
+      </div>
+      <textarea id="srcText" placeholder="Toque no microfone e fale, ou digite aqui&hellip;" aria-label="Texto para traduzir"></textarea>
+      <div class="controls">
+        <button class="mic" id="micBtn" title="Falar" aria-label="Falar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+        </button>
+        <button class="btn-icon" id="clearBtn" title="Limpar" aria-label="Limpar texto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+        <span class="spacer"></span>
+        <button class="btn-icon" id="srcSpeak" title="Ouvir o texto de origem" aria-label="Ouvir texto de origem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <div class="swap-wrap">
+      <button class="swap" id="swapBtn" title="Inverter idiomas" aria-label="Inverter idiomas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16"/><path d="M4 7l3-3 3 3"/><path d="M17 20V4"/><path d="M20 17l-3 3-3-3"/></svg>
+      </button>
+    </div>
+
+    <section class="panel target" aria-label="Tradução">
+      <div class="lang-row">
+        <span class="lang-label">Para</span>
+        <select class="lang" id="tgtLang" aria-label="Idioma de destino"></select>
+      </div>
+      <div class="voice-wrap" id="voiceWrapTgt" hidden style="justify-content:flex-end">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+        <select class="voice-select" id="voiceTgt" aria-label="Voz do idioma de destino"></select>
+      </div>
+      <div class="output placeholder" id="output" aria-live="polite">A tradução aparece aqui.</div>
+      <div class="controls">
+        <span class="spacer"></span>
+        <button class="btn-icon" id="copyBtn" title="Copiar tradução" aria-label="Copiar tradução" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+        </button>
+        <button class="btn-icon" id="tgtSpeak" title="Ouvir a tradução" aria-label="Ouvir a tradução" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <div class="settings"><label class="toggle" id="lblType"><input type="checkbox" id="tType"> Traduzir enquanto digito</label></div>
+    <button class="btn-translate" id="translateBtn">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+      Traduzir
+    </button>
+    <p class="hint" id="hint"></p>
+    <footer>Entrada por voz usa o reconhecimento do navegador (melhor no Chrome) e pode pedir permissão do microfone.</footer>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var LANGS = [
+    { code: "pt-BR", name: "Português" }, { code: "en-US", name: "Inglês" },
+    { code: "es-ES", name: "Espanhol" }, { code: "fr-FR", name: "Francês" },
+    { code: "de-DE", name: "Alemão" }, { code: "it-IT", name: "Italiano" },
+    { code: "ja-JP", name: "Japonês" }, { code: "ko-KR", name: "Coreano" },
+    { code: "zh-CN", name: "Chinês (mandarim)" }, { code: "ru-RU", name: "Russo" },
+    { code: "ar-SA", name: "Árabe" }, { code: "hi-IN", name: "Hindi" },
+    { code: "nl-NL", name: "Holandês" }
+  ];
+  var $ = function (id) { return document.getElementById(id); };
+  function nameOf(c) { for (var i=0;i<LANGS.length;i++) if (LANGS[i].code===c) return LANGS[i].name; return c; }
+  function baseOf(c) { return (c||"").split("-")[0].toLowerCase(); }
+  function fillSelect(s) { LANGS.forEach(function (l) { var o=document.createElement("option"); o.value=l.code; o.textContent=l.name; s.appendChild(o); }); }
+  function genId() { return "c" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  // ---- Refs ----
+  var tabConvo=$("tabConvo"), tabTrans=$("tabTrans"), panelConvo=$("panelConvo"), panelTrans=$("panelTrans");
+  var convoSelect=$("convoSelect"), newConvo=$("newConvo"), delConvo=$("delConvo");
+  var nameA=$("nameA"), nameB=$("nameB"), langA=$("langA"), langB=$("langB"), convoSwap=$("convoSwap");
+  var voiceWrapA=$("voiceWrapA"), voiceA=$("voiceA"), voiceWrapB=$("voiceWrapB"), voiceB=$("voiceB");
+  var transcript=$("transcript"), liveStatus=$("liveStatus"), syncStatus=$("syncStatus"), copyConvo=$("copyConvo");
+  var tHands=$("tHands"), tAuto=$("tAuto"), lblHands=$("lblHands"), lblAuto=$("lblAuto"), rate=$("rate"), rateVal=$("rateVal");
+  var sideButtons=$("sideButtons"), autoWrap=$("autoWrap"), micA=$("micA"), micB=$("micB"), autoBtn=$("autoBtn"), micALbl=$("micALbl"), micBLbl=$("micBLbl");
+  var convoInput=$("convoInput"), sendA=$("sendA"), sendB=$("sendB"), sendALbl=$("sendALbl"), sendBLbl=$("sendBLbl");
+  var srcLang=$("srcLang"), tgtLang=$("tgtLang"), srcText=$("srcText"), output=$("output"), hint=$("hint");
+  var micBtn=$("micBtn"), translateBtn=$("translateBtn"), swapBtn=$("swapBtn"), clearBtn=$("clearBtn");
+  var copyBtn=$("copyBtn"), srcSpeak=$("srcSpeak"), tgtSpeak=$("tgtSpeak"), tType=$("tType"), lblType=$("lblType");
+  var voiceWrapSrc=$("voiceWrapSrc"), voiceSrc=$("voiceSrc"), voiceWrapTgt=$("voiceWrapTgt"), voiceTgt=$("voiceTgt");
+
+  [langA, langB, srcLang, tgtLang].forEach(fillSelect);
+
+  // ---- Estado salvo ----
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem("tvoz") || "{}") || {}; } catch (e) {}
+
+  var voiceRate = typeof saved.rate === "number" ? saved.rate : 1;
+  var handsFree = !!saved.handsFree, autoDetect = !!saved.autoDetect;
+  var autoTyping = saved.autoTyping !== false;   // padrão ligado
+  var voicePrefs = (saved.voicePrefs && typeof saved.voicePrefs === "object") ? saved.voicePrefs : {};
+  srcLang.value = saved.src || "pt-BR"; tgtLang.value = saved.tgt || "en-US";
+
+  function normalizeConvo(o) {
+    o = o || {};
+    return {
+      id: o.id || genId(),
+      title: typeof o.title === "string" ? o.title : "",
+      nameA: typeof o.nameA === "string" ? o.nameA : "",
+      nameB: typeof o.nameB === "string" ? o.nameB : "",
+      langA: o.langA || "pt-BR", langB: o.langB || "en-US",
+      turns: Array.isArray(o.turns) ? o.turns.slice(-200) : [],
+      createdAt: o.createdAt || Date.now(), updatedAt: o.updatedAt || Date.now()
+    };
+  }
+
+  var convos = [];
+  if (Array.isArray(saved.convos) && saved.convos.length) {
+    convos = saved.convos.map(normalizeConvo);
+  } else if (Array.isArray(saved.history) && saved.history.length) {
+    // Migração do formato antigo (uma conversa só).
+    convos = [ normalizeConvo({ langA: saved.a || "pt-BR", langB: saved.b || "en-US", turns: saved.history }) ];
+  }
+  var currentId = saved.currentId || (convos[0] && convos[0].id) || null;
+  if (!convos.length) { var c0 = normalizeConvo({ langA: saved.a || "pt-BR", langB: saved.b || "en-US" }); convos.push(c0); currentId = c0.id; }
+  if (!byId(currentId)) currentId = convos[0].id;
+
+  function byId(id) { for (var i=0;i<convos.length;i++) if (convos[i].id===id) return convos[i]; return null; }
+  function indexOf(id) { for (var i=0;i<convos.length;i++) if (convos[i].id===id) return i; return -1; }
+  function current() { return byId(currentId) || convos[0]; }
+  function sortedConvos() { return convos.slice().sort(function(a,b){ return (b.updatedAt||0)-(a.updatedAt||0); }); }
+  function convoTitle(c) {
+    if (c.title) return c.title;
+    if (c.turns.length) { var t=c.turns[0].orig || ""; return t.length>36 ? t.slice(0,36)+"…" : (t||"Conversa"); }
+    return "Nova conversa";
+  }
+  function nameForSide(c, side) { return side==="A" ? (c.nameA || "Pessoa 1") : (c.nameB || "Pessoa 2"); }
+
+  function persistAll() {
+    try {
+      localStorage.setItem("tvoz", JSON.stringify({
+        src: srcLang.value, tgt: tgtLang.value, rate: voiceRate, handsFree: handsFree,
+        autoDetect: autoDetect, autoTyping: autoTyping, voicePrefs: voicePrefs,
+        currentId: currentId, convos: convos
+      }));
+    } catch (e) {}
+  }
+
+  // ---- Tradução (Claude) ----
+  var samplePromise = null;
+  function getSample() {
+    if (!samplePromise) samplePromise = (window.claude && window.claude.use) ? window.claude.use("sample").catch(function(){return null;}) : Promise.resolve(null);
+    return samplePromise;
+  }
+  function doTranslate(text, fromCode, toCode) {
+    return getSample().then(function (sample) {
+      if (!sample) return Promise.reject({ code: "no_sample" });
+      var prompt = "Você é um intérprete profissional. Traduza a fala abaixo de " + nameOf(fromCode) +
+        " para " + nameOf(toCode) + ". Responda APENAS com a tradução natural e falada, sem aspas, " +
+        "sem notas e sem repetir o original. Preserve o tom.\n\nFala:\n" + text;
+      return sample(prompt, { modelTier: "quick", cache: false }).then(function (res) {
+        return (res && res.text ? res.text : "").trim().replace(/^["'“”]+|["'“”]+$/g, "");
+      });
+    });
+  }
+  function detectAndTranslate(text) {
+    return getSample().then(function (sample) {
+      if (!sample) return Promise.reject({ code: "no_sample" });
+      var a = nameOf(langA.value), b = nameOf(langB.value);
+      var prompt = "Duas pessoas conversam: a Pessoa A fala " + a + " e a Pessoa B fala " + b +
+        ". Decida em qual desses dois idiomas está a fala abaixo e traduza para o idioma da OUTRA pessoa. " +
+        "Responda SOMENTE com JSON válido, sem texto fora do JSON, no formato " +
+        "{\"side\":\"A\" ou \"B\", \"translation\":\"<tradução no idioma da outra pessoa>\"}. \"side\" é quem FALOU.\n\nFala:\n" + text;
+      var opts = { modelTier: "quick", cache: false };
+      var p = (typeof sample.json === "function") ? sample.json(prompt, opts)
+        : sample(prompt, opts).then(function (r) { return JSON.parse((r && r.text || "").replace(/```json|```/g, "").trim()); });
+      return p.then(function (obj) {
+        var side = (obj && obj.side === "B") ? "B" : "A";
+        var trans = (obj && obj.translation != null) ? String(obj.translation).trim() : "";
+        return { side: side, trans: trans };
+      });
+    });
+  }
+
+  // ---- Síntese de voz ----
+  var synth = window.speechSynthesis, voices = [];
+  function loadVoices() { if (synth) voices = synth.getVoices() || []; }
+  if (synth) { loadVoices(); if (typeof synth.onvoiceschanged !== "undefined") synth.onvoiceschanged = function(){ loadVoices(); refreshVoiceSelects(); }; }
+  function voicesFor(code) { var base=baseOf(code); return voices.filter(function(v){ return baseOf((v.lang||"").replace("_","-"))===base; }); }
+  function pickVoice(code) {
+    if (!voices.length) loadVoices();
+    var base=baseOf(code), pref=voicePrefs[base];
+    if (pref) { for (var k=0;k<voices.length;k++) if (voices[k].voiceURI===pref) return voices[k]; }
+    var exact=null, partial=null;
+    for (var i=0;i<voices.length;i++) { var v=(voices[i].lang||"").toLowerCase().replace("_","-"); if (v===code.toLowerCase()){exact=voices[i];break;} if(!partial && baseOf(v)===base) partial=voices[i]; }
+    return exact || partial || null;
+  }
+  function stopSpeaking() { if (synth && synth.speaking) synth.cancel(); }
+  function speak(text, code, onEnd) {
+    if (!synth || !text) { if (onEnd) onEnd(); return; }
+    synth.cancel();
+    var u=new SpeechSynthesisUtterance(text), v=pickVoice(code);
+    if (v) u.voice=v;
+    u.lang=code; u.rate=voiceRate; u.pitch=1;
+    var done=false; function fin(){ if(done)return; done=true; if(onEnd) onEnd(); }
+    u.onend=fin; u.onerror=fin; synth.speak(u);
+  }
+  // Popula um seletor de voz para um idioma; esconde se houver só uma (ou nenhuma) voz.
+  function fillVoiceSelect(sel, wrap, code) {
+    var list=voicesFor(code);
+    if (list.length < 2) { wrap.hidden = true; sel.innerHTML=""; return; }
+    wrap.hidden = false;
+    var base=baseOf(code), cur=voicePrefs[base]||"";
+    sel.innerHTML="";
+    var auto=document.createElement("option"); auto.value=""; auto.textContent="Voz automática"; sel.appendChild(auto);
+    list.forEach(function(v){ var o=document.createElement("option"); o.value=v.voiceURI; o.textContent=v.name; sel.appendChild(o); });
+    sel.value = cur && list.some(function(v){return v.voiceURI===cur;}) ? cur : "";
+  }
+  function refreshVoiceSelects() {
+    fillVoiceSelect(voiceA, voiceWrapA, langA.value);
+    fillVoiceSelect(voiceB, voiceWrapB, langB.value);
+    fillVoiceSelect(voiceSrc, voiceWrapSrc, srcLang.value);
+    fillVoiceSelect(voiceTgt, voiceWrapTgt, tgtLang.value);
+  }
+  function onVoicePick(sel, code) { var base=baseOf(code); if (sel.value) voicePrefs[base]=sel.value; else delete voicePrefs[base]; persistAll(); }
+  voiceA.addEventListener("change", function(){ onVoicePick(voiceA, langA.value); });
+  voiceB.addEventListener("change", function(){ onVoicePick(voiceB, langB.value); });
+  voiceSrc.addEventListener("change", function(){ onVoicePick(voiceSrc, srcLang.value); });
+  voiceTgt.addEventListener("change", function(){ onVoicePick(voiceTgt, tgtLang.value); });
+
+  /* ===================== SINCRONIZAÇÃO (db) ===================== */
+  var dbCol=null, dbUnsub=null, dbSynced=false, dbLoadTimer=null, flushTimer=null, writeChain=Promise.resolve();
+  var pendingIds={}, syncedIds={};
+
+  function setSync(state) {
+    var map = {
+      local:   ["💾","Salvo neste dispositivo"], syncing: ["↻","Sincronizando…"],
+      synced:  ["☁️","Sincronizado na sua conta"], offline: ["⚠️","Sem sincronizar agora"],
+      full:    ["⚠️","Armazenamento cheio"]
+    };
+    var m=map[state]||map.local; syncStatus.textContent=m[0]+" "+m[1];
+  }
+  function serializeConvo(c) { return { title:c.title, nameA:c.nameA, nameB:c.nameB, langA:c.langA, langB:c.langB, turns:(c.turns||[]).slice(-200), createdAt:c.createdAt, updatedAt:c.updatedAt }; }
+  function touch(c) { c.updatedAt = Date.now(); }
+  function markDirty(id) { pendingIds[id]=true; scheduleFlush(); }
+  function saveConvo(id) { persistAll(); markDirty(id); }
+
+  function scheduleFlush() {
+    if (!dbCol) return;
+    if (flushTimer) clearTimeout(flushTimer);
+    setSync("syncing");
+    flushTimer = setTimeout(function () {
+      flushTimer = null;
+      var ids = Object.keys(pendingIds); if (!ids.length) { setSync("synced"); return; }
+      ids.forEach(function (id) {
+        var c = byId(id); if (!c) { delete pendingIds[id]; return; }
+        delete pendingIds[id];
+        writeChain = writeChain.then(function () {
+          if (!dbCol) return;
+          return dbCol.doc(id).set(serializeConvo(c)).then(
+            function(){ syncedIds[id]=true; setSync("synced"); },
+            function(err){ setSync(err && err.code==="quota_exceeded" ? "full" : "offline"); }
+          );
+        });
+      });
+    }, 500);
+  }
+  function deleteDoc(id) {
+    delete pendingIds[id];
+    if (dbCol) writeChain = writeChain.then(function(){ return dbCol.doc(id).delete().catch(function(){}); });
+  }
+
+  function initDb() {
+    if (!(window.claude && window.claude.use)) { setSync("local"); return; }
+    Promise.all([ window.claude.use("db").catch(function(){return null;}), window.claude.use("user").catch(function(){return null;}) ])
+      .then(function (arr) {
+        var db=arr[0], user=arr[1];
+        if (!db || !user) { setSync("local"); return; }
+        return Promise.resolve(user.id()).then(function (id) {
+          if (!id) { setSync("local"); return; }
+          try { dbCol = db.collection("data/users/"+id+"/convos"); } catch (e) { dbCol=null; setSync("local"); return; }
+          subscribeDb();
+        });
+      }).catch(function(){ setSync("local"); });
+  }
+  function readRemote(qs) {
+    var remote={};
+    qs.docs.forEach(function(d){ if (d.exists) { var o=d.data()||{}; o.id=d.id; remote[d.id]=normalizeConvo(o); syncedIds[d.id]=true; } });
+    return remote;
+  }
+  function subscribeDb() {
+    setSync("syncing");
+    dbLoadTimer = setTimeout(function(){ if(!dbSynced) setSync("offline"); }, 10000);
+    dbUnsub = dbCol.onSnapshot(function (qs) {
+      if (qs.metadata && qs.metadata.fromCache && !dbSynced) return;
+      if (dbLoadTimer) { clearTimeout(dbLoadTimer); dbLoadTimer=null; }
+      var remote = readRemote(qs);
+      if (!dbSynced) {
+        dbSynced = true;
+        // Une: remoto mais novo vence; conversas só-locais sobem.
+        Object.keys(remote).forEach(function(id){ var i=indexOf(id); if(i<0) convos.push(remote[id]); else if((remote[id].updatedAt||0)>=(convos[i].updatedAt||0)) convos[i]=remote[id]; });
+        convos.forEach(function(c){ if(!remote[c.id]) markDirty(c.id); });
+        ensureCurrent(); persistAll(); renderList(); renderConvo();
+        setSync(Object.keys(pendingIds).length ? "syncing" : "synced");
+        return;
+      }
+      if (qs.metadata && qs.metadata.hasPendingWrites) { setSync("synced"); return; } // eco do próprio envio
+      Object.keys(remote).forEach(function(id){ var i=indexOf(id); if(i<0) convos.push(remote[id]); else if((remote[id].updatedAt||0)>=(convos[i].updatedAt||0)) convos[i]=remote[id]; });
+      for (var j=convos.length-1;j>=0;j--) { var id=convos[j].id; if (!remote[id] && !pendingIds[id] && syncedIds[id]) convos.splice(j,1); }
+      ensureCurrent(); persistAll(); renderList(); renderConvo();
+      setSync("synced");
+    }, function (err) {
+      if (dbLoadTimer) { clearTimeout(dbLoadTimer); dbLoadTimer=null; }
+      dbCol=null; dbSynced=false; setSync(err && err.code==="revoked" ? "local" : "offline");
+    });
+  }
+  function ensureCurrent() {
+    if (!convos.length) { var c=normalizeConvo({}); convos.push(c); currentId=c.id; markDirty(c.id); loadCurrentIntoUI(); return; }
+    if (!byId(currentId)) { currentId = sortedConvos()[0].id; loadCurrentIntoUI(); }
+  }
+
+  /* ===================== CONVERSA ===================== */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var activeSide=null, recog=null, userStopped=false, suspendedForSpeech=false;
+  var lastDetectedLang = current().langA;
+
+  function sideLang(s){ return s==="A" ? langA.value : langB.value; }
+  function otherLang(s){ return s==="A" ? langB.value : langA.value; }
+  function recogLangFor(s){ return s==="A" ? langA.value : s==="B" ? langB.value : (lastDetectedLang||langA.value); }
+
+  function refreshLabels() {
+    micALbl.textContent=nameOf(langA.value); micBLbl.textContent=nameOf(langB.value);
+    sendALbl.textContent=nameOf(langA.value); sendBLbl.textContent=nameOf(langB.value);
+  }
+  function setActiveUI() {
+    micA.classList.toggle("listening", activeSide==="A");
+    micB.classList.toggle("listening", activeSide==="B");
+    autoBtn.classList.toggle("listening", activeSide==="AUTO");
+    micA.disabled = SR ? (activeSide==="B") : true;
+    micB.disabled = SR ? (activeSide==="A") : true;
+    autoBtn.disabled = !SR;
+  }
+  function setLive(msg, kind) { liveStatus.className="live-status"+(kind==="err"?" err":""); liveStatus.innerHTML=""; if(msg) liveStatus.appendChild(document.createTextNode(msg)); }
+  function setLiveListening(side, interim) {
+    liveStatus.className="live-status";
+    liveStatus.innerHTML = "🎤 Ouvindo" + (side==="AUTO" ? "" : " (" + nameOf(sideLang(side)) + ")") + "… ";
+    if (interim) { var s=document.createElement("span"); s.className="txt"; s.textContent=interim; liveStatus.appendChild(s); }
+  }
+
+  // Carrega a conversa atual nos controles (idiomas, nomes, vozes).
+  function loadCurrentIntoUI() {
+    var c=current();
+    langA.value=c.langA; langB.value=c.langB;
+    nameA.value=c.nameA; nameB.value=c.nameB;
+    lastDetectedLang=c.langA;
+    refreshLabels(); refreshVoiceSelects();
+  }
+  function renderList() {
+    convoSelect.innerHTML="";
+    sortedConvos().forEach(function(c){ var o=document.createElement("option"); o.value=c.id; o.textContent=convoTitle(c); convoSelect.appendChild(o); });
+    convoSelect.value=currentId;
+    delConvo.disabled = convos.length<=1 && !current().turns.length;
+  }
+  function renderConvo() {
+    var c=current();
+    transcript.innerHTML="";
+    copyConvo.hidden = !c.turns.length;
+    if (!c.turns.length) {
+      var e=document.createElement("div"); e.className="empty";
+      e.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/><path d="M8 11h.01"/><path d="M12 11h.01"/><path d="M16 11h.01"/></svg><div>Toque no idioma de quem vai falar e comece. A tradução aparece aqui e é falada em voz alta.</div>';
+      transcript.appendChild(e); return;
+    }
+    c.turns.forEach(function (t) {
+      var b=document.createElement("div"); b.className="bubble "+(t.side==="A"?"a":"b")+(t.pending?" pending":"");
+      var who=document.createElement("div"); who.className="who"; who.textContent=nameForSide(c, t.side);
+      var tr=document.createElement("div"); tr.className="trans"; tr.textContent=t.pending?"traduzindo…":t.trans;
+      var og=document.createElement("div"); og.className="orig"; og.textContent=t.orig;
+      b.appendChild(who); b.appendChild(tr); b.appendChild(og);
+      if (!t.pending && t.trans) {
+        var play=document.createElement("button"); play.className="play"; play.type="button"; play.setAttribute("aria-label","Ouvir de novo");
+        play.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a9 9 0 0 1 0 14"/></svg>';
+        play.addEventListener("click", function(){ speak(t.trans, t.toCode); });
+        b.appendChild(play);
+      }
+      transcript.appendChild(b);
+    });
+    transcript.scrollTop = transcript.scrollHeight;
+  }
+
+  function resumeIfHandsFree() {
+    if (handsFree && activeSide && !userStopped) { suspendedForSpeech=false; beginRecog(); }
+    else if (!handsFree) { cleanupSession(); }
+  }
+  function handleExplicit(side, text) {
+    var c=current(), from=sideLang(side), to=otherLang(side);
+    var turn={ side:side, orig:text, trans:"", fromCode:from, toCode:to, pending:true };
+    c.turns.push(turn); renderConvo();
+    doTranslate(text, from, to).then(function (out) {
+      turn.pending=false; turn.trans=out||text; delete turn.pending; touch(c); saveConvo(c.id); renderList(); renderConvo(); setLive("");
+      speak(turn.trans, to, resumeIfHandsFree);
+    }).catch(function (err) {
+      var i=c.turns.indexOf(turn); if(i>-1) c.turns.splice(i,1); renderConvo(); showTransError(err); resumeIfHandsFree();
+    });
+  }
+  function handleAuto(text) {
+    var c=current();
+    setLive("Detectando idioma e traduzindo…");
+    detectAndTranslate(text).then(function (r) {
+      var side=r.side, from=sideLang(side), to=otherLang(side), trans=r.trans||text;
+      lastDetectedLang=from;
+      c.turns.push({ side:side, orig:text, trans:trans, fromCode:from, toCode:to });
+      touch(c); saveConvo(c.id); renderList(); renderConvo(); setLive("");
+      speak(trans, to, resumeIfHandsFree);
+    }).catch(function (err) { showTransError(err); resumeIfHandsFree(); });
+  }
+  function showTransError(err) {
+    if (err && err.code==="no_sample") setLive("Tradução indisponível nesta visualização. Abra no claude.ai.", "err");
+    else if (err && err.code==="rate_limited") setLive("Muitas falas seguidas. Espere um instante.", "err");
+    else setLive("Não consegui traduzir essa fala. Tente de novo.", "err");
+  }
+  function processText(side, text) { text=(text||"").trim(); if(!text) return; if (side==="AUTO") handleAuto(text); else handleExplicit(side, text); }
+
+  function cleanupSession() { activeSide=null; suspendedForSpeech=false; recog=null; setActiveUI(); }
+  function beginRecog() {
+    if (!SR) return;
+    var finalText="";
+    recog=new SR(); recog.lang=recogLangFor(activeSide); recog.interimResults=true; recog.continuous=handsFree; recog.maxAlternatives=1;
+    recog.onstart=function(){ setLiveListening(activeSide, ""); };
+    recog.onresult=function(e){
+      var interim="", finalSeg="";
+      for (var i=e.resultIndex;i<e.results.length;i++){ var r=e.results[i]; if(r.isFinal) finalSeg+=r[0].transcript; else interim+=r[0].transcript; }
+      if (handsFree) {
+        setLiveListening(activeSide, interim);
+        if (finalSeg.trim() && !suspendedForSpeech) { suspendedForSpeech=true; var side=activeSide, seg=finalSeg.trim(); try{recog.stop();}catch(e2){} processText(side, seg); }
+      } else { if (finalSeg) finalText+=finalSeg; setLiveListening(activeSide, (finalText+interim).trim()); }
+    };
+    recog.onerror=function(e){
+      if (e.error==="not-allowed"||e.error==="service-not-allowed") setLive("Microfone bloqueado aqui. Use o campo de texto abaixo.", "err");
+      else if (e.error==="no-speech") { if(!handsFree) setLive("Não ouvi nada. Tente de novo.", "err"); }
+      else if (e.error==="audio-capture") setLive("Nenhum microfone encontrado.", "err");
+      else setLive("Voz indisponível aqui — use o campo de texto abaixo.", "err");
+    };
+    recog.onend=function(){
+      if (userStopped) { cleanupSession(); setLive(""); return; }
+      if (handsFree) { if (suspendedForSpeech) return; beginRecog(); return; }
+      var sideNow=activeSide, said=finalText.trim(); cleanupSession();
+      if (said) { setLive(""); processText(sideNow, said); } else setLive("");
+    };
+    try { recog.start(); } catch (err) { cleanupSession(); setLive("Não foi possível iniciar o microfone. Use o campo de texto.", "err"); }
+  }
+  function startSession(side) {
+    if (!SR) { setLive("Seu navegador não reconhece voz. Use o campo de texto abaixo.", "err"); return; }
+    if (activeSide) { userStopped=true; try{recog&&recog.stop();}catch(e){} return; }
+    userStopped=false; activeSide=side; setActiveUI(); stopSpeaking(); beginRecog();
+  }
+  micA.addEventListener("click", function(){ startSession("A"); });
+  micB.addEventListener("click", function(){ startSession("B"); });
+  autoBtn.addEventListener("click", function(){ startSession("AUTO"); });
+
+  function sendText(side) { var t=convoInput.value.trim(); if(!t){ convoInput.focus(); return; } convoInput.value=""; if (autoDetect) processText("AUTO", t); else processText(side, t); }
+  sendA.addEventListener("click", function(){ sendText("A"); });
+  sendB.addEventListener("click", function(){ sendText("B"); });
+  convoInput.addEventListener("keydown", function(e){ if(e.key==="Enter"){ e.preventDefault(); sendText("A"); } });
+
+  // Nomes dos participantes
+  nameA.addEventListener("input", function(){ var c=current(); c.nameA=nameA.value.trim(); touch(c); saveConvo(c.id); renderConvo(); });
+  nameB.addEventListener("input", function(){ var c=current(); c.nameB=nameB.value.trim(); touch(c); saveConvo(c.id); renderConvo(); });
+
+  // Idiomas por conversa
+  langA.addEventListener("change", function(){ var c=current(); c.langA=langA.value; lastDetectedLang=langA.value; touch(c); saveConvo(c.id); refreshLabels(); refreshVoiceSelects(); });
+  langB.addEventListener("change", function(){ var c=current(); c.langB=langB.value; touch(c); saveConvo(c.id); refreshLabels(); refreshVoiceSelects(); });
+  convoSwap.addEventListener("click", function(){ var c=current(); var t=langA.value; langA.value=langB.value; langB.value=t; c.langA=langA.value; c.langB=langB.value; touch(c); saveConvo(c.id); refreshLabels(); refreshVoiceSelects(); stopSpeaking(); });
+
+  // Troca / criação / exclusão de conversas
+  convoSelect.addEventListener("change", function(){ stopActive(); stopSpeaking(); currentId=convoSelect.value; persistAll(); loadCurrentIntoUI(); renderConvo(); setLive(""); });
+  newConvo.addEventListener("click", function(){
+    stopActive(); stopSpeaking();
+    var c=normalizeConvo({ langA: langA.value, langB: langB.value });
+    convos.push(c); currentId=c.id; saveConvo(c.id); loadCurrentIntoUI(); renderList(); renderConvo(); setLive(""); nameA.focus();
+  });
+  delConvo.addEventListener("click", function(){
+    stopActive(); stopSpeaking();
+    var id=currentId, i=indexOf(id);
+    if (i>-1) convos.splice(i,1);
+    deleteDoc(id);
+    if (!convos.length) { var c=normalizeConvo({ langA: langA.value, langB: langB.value }); convos.push(c); markDirty(c.id); }
+    currentId = sortedConvos()[0].id;
+    persistAll(); loadCurrentIntoUI(); renderList(); renderConvo(); setLive("");
+  });
+
+  // Copiar conversa
+  function convoToText(c) {
+    var out=[convoTitle(c), new Date(c.createdAt||Date.now()).toLocaleString(), ""];
+    c.turns.forEach(function(t){ out.push(nameForSide(c, t.side)+" ("+nameOf(t.fromCode)+"): "+t.orig); out.push("    → ("+nameOf(t.toCode)+") "+t.trans); });
+    return out.join("\n");
+  }
+  copyConvo.addEventListener("click", function(){
+    var text=convoToText(current());
+    function fb(){ setLive("Não consegui copiar automaticamente.", "err"); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function(){ setLive("Conversa copiada!", false); }, fb); else fb();
+  });
+
+  // Configurações
+  function applyAutoUI() { sideButtons.hidden=autoDetect; autoWrap.hidden=!autoDetect; lblAuto.classList.toggle("on", autoDetect); }
+  function stopActive() { if (activeSide) { userStopped=true; try{recog&&recog.stop();}catch(e){} } }
+  tHands.checked=handsFree; lblHands.classList.toggle("on", handsFree); tAuto.checked=autoDetect;
+  tHands.addEventListener("change", function(){ stopActive(); handsFree=tHands.checked; lblHands.classList.toggle("on", handsFree); persistAll(); });
+  tAuto.addEventListener("change", function(){ stopActive(); autoDetect=tAuto.checked; applyAutoUI(); persistAll(); });
+  function applyRate() { rate.value=voiceRate; rateVal.innerHTML=voiceRate.toFixed(1)+"&times;"; }
+  rate.addEventListener("input", function(){ voiceRate=parseFloat(rate.value)||1; rateVal.innerHTML=voiceRate.toFixed(1)+"&times;"; });
+  rate.addEventListener("change", persistAll);
+
+  loadCurrentIntoUI(); applyAutoUI(); applyRate(); setActiveUI(); renderList(); renderConvo();
+  setSync("local"); initDb();
+  if (!SR) setLive("Seu navegador não reconhece voz. Escreva abaixo — a tradução ainda é falada em voz alta.", null);
+
+  /* ===================== TRADUZIR ===================== */
+  function setHint(m, err){ hint.textContent=m||""; hint.classList.toggle("err", !!err); }
+  function showOutput(t){ output.textContent=t; output.classList.remove("placeholder"); copyBtn.disabled=false; tgtSpeak.disabled=false; }
+  var translating=false, tListening=false, tRecog=null, autoSpeak=false, typeTimer=null;
+
+  function translate() {
+    var text=srcText.value.trim();
+    if (!text) { setHint("Escreva ou fale algo primeiro.", true); return; }
+    if (srcLang.value===tgtLang.value) { showOutput(text); setHint("Os idiomas são iguais.", false); return; }
+    if (translating) return;
+    translating=true; translateBtn.disabled=true; setHint("Traduzindo…", false);
+    output.classList.add("placeholder"); output.textContent="Traduzindo…";
+    doTranslate(text, srcLang.value, tgtLang.value).then(function (out) {
+      translating=false; translateBtn.disabled=false;
+      if (!out) { setHint("Não consegui traduzir. Tente de novo.", true); output.textContent="A tradução aparece aqui."; return; }
+      showOutput(out); setHint("", false); if (autoSpeak) speak(out, tgtLang.value);
+    }).catch(function (err) {
+      translating=false; translateBtn.disabled=false; output.textContent="A tradução aparece aqui.";
+      if (err && err.code==="no_sample") setHint("Tradução indisponível nesta visualização. Abra no claude.ai.", true);
+      else if (err && err.code==="rate_limited") setHint("Muitas traduções seguidas. Espere um instante.", true);
+      else setHint("Algo deu errado. Tente novamente.", true);
+    });
+  }
+
+  if (!SR) { micBtn.disabled=true; micBtn.title="Reconhecimento de voz não suportado"; }
+  else micBtn.addEventListener("click", function () {
+    if (tListening) { try{tRecog.stop();}catch(e){} return; }
+    stopSpeaking();
+    var finalText="";
+    tRecog=new SR(); tRecog.lang=srcLang.value; tRecog.interimResults=true; tRecog.continuous=false; tRecog.maxAlternatives=1;
+    tRecog.onstart=function(){ tListening=true; autoSpeak=true; micBtn.classList.add("listening"); setHint("Ouvindo… fale agora.", false); };
+    tRecog.onresult=function(e){ var interim=""; for(var i=e.resultIndex;i<e.results.length;i++){ var r=e.results[i]; if(r.isFinal) finalText+=r[0].transcript; else interim+=r[0].transcript; } srcText.value=(finalText+interim).trim(); };
+    tRecog.onerror=function(e){ tListening=false; micBtn.classList.remove("listening"); if(e.error==="not-allowed"||e.error==="service-not-allowed") setHint("Microfone bloqueado. Permita o acesso ou digite.", true); else if(e.error==="no-speech") setHint("Não ouvi nada. Tente de novo.", true); else setHint("Voz indisponível aqui — pode digitar o texto.", true); };
+    tRecog.onend=function(){ tListening=false; micBtn.classList.remove("listening"); if(srcText.value.trim()){ setHint("", false); translate(); } };
+    try { tRecog.start(); } catch (err) { tListening=false; micBtn.classList.remove("listening"); setHint("Não foi possível iniciar o microfone.", true); }
+  });
+
+  translateBtn.addEventListener("click", function(){ autoSpeak=true; translate(); });
+  srcText.addEventListener("keydown", function(e){ if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){ e.preventDefault(); autoSpeak=true; translate(); } });
+  // Traduzir enquanto digita
+  tType.checked=autoTyping; lblType.classList.toggle("on", autoTyping);
+  tType.addEventListener("change", function(){ autoTyping=tType.checked; lblType.classList.toggle("on", autoTyping); persistAll(); });
+  srcText.addEventListener("input", function(){
+    if (!autoTyping) return;
+    if (typeTimer) clearTimeout(typeTimer);
+    typeTimer=setTimeout(function(){ if (srcText.value.trim()) { autoSpeak=false; translate(); } }, 800);
+  });
+
+  swapBtn.addEventListener("click", function(){
+    var s=srcLang.value; srcLang.value=tgtLang.value; tgtLang.value=s; persistAll(); refreshVoiceSelects();
+    var outText=output.classList.contains("placeholder")?"":output.textContent;
+    if (outText){ srcText.value=outText; output.textContent="A tradução aparece aqui."; output.classList.add("placeholder"); copyBtn.disabled=true; tgtSpeak.disabled=true; }
+    stopSpeaking(); setHint("", false);
+  });
+  clearBtn.addEventListener("click", function(){ srcText.value=""; output.textContent="A tradução aparece aqui."; output.classList.add("placeholder"); copyBtn.disabled=true; tgtSpeak.disabled=true; stopSpeaking(); setHint("", false); srcText.focus(); });
+  srcSpeak.addEventListener("click", function(){ var t=srcText.value.trim(); if(!t){ setHint("Nada para ouvir ainda.", true); return; } speak(t, srcLang.value); });
+  tgtSpeak.addEventListener("click", function(){ if(output.classList.contains("placeholder")) return; speak(output.textContent, tgtLang.value); });
+  copyBtn.addEventListener("click", function(){
+    if (output.classList.contains("placeholder")) return;
+    var text=output.textContent;
+    function fb(){ var r=document.createRange(); r.selectNodeContents(output); var sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r); setHint("Tradução selecionada — copie com Ctrl/Cmd+C.", false); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function(){ setHint("Tradução copiada!", false); }, fb); else fb();
+  });
+  srcLang.addEventListener("change", function(){ persistAll(); refreshVoiceSelects(); });
+  tgtLang.addEventListener("change", function(){ persistAll(); refreshVoiceSelects(); });
+
+  /* ===================== ABAS ===================== */
+  function selectTab(which) {
+    var convo = which==="convo";
+    tabConvo.setAttribute("aria-selected", convo?"true":"false");
+    tabTrans.setAttribute("aria-selected", convo?"false":"true");
+    panelConvo.hidden=!convo; panelTrans.hidden=convo;
+    stopActive(); stopSpeaking();
+  }
+  tabConvo.addEventListener("click", function(){ selectTab("convo"); });
+  tabTrans.addEventListener("click", function(){ selectTab("trans"); });
+})();
+</script>
