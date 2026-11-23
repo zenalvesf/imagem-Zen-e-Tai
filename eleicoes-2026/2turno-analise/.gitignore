@@ -1,0 +1,3 @@
+# dados baixados do TSE e JSONs gerados (regeneráveis; grandes)
+zips/
+site/data/*.json
